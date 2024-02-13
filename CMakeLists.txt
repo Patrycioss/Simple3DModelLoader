@@ -11,7 +11,7 @@ target_include_directories(
         VulkanCPP 
         PUBLIC 
         ${CMAKE_CURRENT_SOURCE_DIR}/include/GLFW 
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/glm-1.0.0
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/glm
         ${Vulkan_INCLUDE_DIRS}
 )
 target_link_libraries(

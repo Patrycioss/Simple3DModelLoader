@@ -23,6 +23,7 @@ int main()
 	glm::mat4 matrix;
 	glm::vec4 vec;
 	auto test = matrix * vec;
+	printf("%d", test.x);
 
 	while(!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
