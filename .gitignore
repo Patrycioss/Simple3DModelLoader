@@ -532,3 +532,7 @@ fabric.properties
 /.idea/modules.xml
 /.idea/VulkanCPP.iml
 /.idea/vcs.xml
+
+**/.obsidian/
+
+
