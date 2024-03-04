@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <glad/gl.h>
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
@@ -93,13 +94,15 @@ LRESULT Win32Window::WndProc(HWND hwnd, const UINT msg, const WPARAM wParam, con
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-Win32Window::Win32Window(const std::function<void()>& renderFunction, const LPCSTR windowTitle)
+Win32Window::Win32Window(const Vec2<int>& size, const LPCSTR& windowTitle, const std::function<void()>& renderFunction)
 	: windowTitle(windowTitle)
 {
+	this->size = size;
+	this->windowTitle = windowTitle;
 	this->renderFunction = renderFunction;
 }
 
-void Win32Window::Setup(const int width, const int height)
+void Win32Window::Setup()
 {
 	printf("Setting up Windows Window!\n");
 
@@ -108,13 +111,13 @@ void Win32Window::Setup(const int width, const int height)
 	auto *const hInstance = HINST_THISCOMPONENT;
 	
 	window.cbSize = sizeof(WNDCLASSEX);
-	window.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+	// window.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
 	// window.hCursor = LoadCursor(hInstance, IDC_ARROW);
 	// window.hIcon   = LoadIcon(hInstance, IDI_APPLICATION);
 	window.lpfnWndProc   = WndProc;
 	window.hInstance = hInstance;
 	window.lpszClassName = WINDOW_CLASS_NAME;
-	window.style = CS_HREDRAW | CS_VREDRAW;
+	window.style = CS_OWNDC;
 	window.cbWndExtra = 0;
 	window.cbClsExtra = 0;
 	window.lpszMenuName = nullptr;
@@ -132,7 +135,7 @@ void Win32Window::Setup(const int width, const int height)
 		windowTitle,                   //Window Title
 		WS_OVERLAPPEDWINDOW,          //style stuff
 		CW_USEDEFAULT, CW_USEDEFAULT, //position x,y
-		width, height,
+		size.X, size.Y,
 		nullptr,
 		nullptr,
 		window.hInstance,
@@ -142,12 +145,47 @@ void Win32Window::Setup(const int width, const int height)
 	HandleError("CreateWindow");
 
 	SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	
+
 	printf("Created Window! \n");
 }
 
 void Win32Window::Run()
 {
+	printf("Creating OpenGL context...\n");
+	//OpenGL Setup
+	constexpr PIXELFORMATDESCRIPTOR pfd =
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    // Flags
+		PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
+		32,                   // Colordepth of the framebuffer.
+		0, 0, 0, 0, 0, 0,
+		0,
+		0,
+		0,
+		0, 0, 0, 0,
+		24,                   // Number of bits for the depthbuffer
+		8,                    // Number of bits for the stencilbuffer
+		0,                    // Number of Aux buffers in the framebuffer.
+		PFD_MAIN_PLANE,
+		0,
+		0, 0, 0
+	};
+
+	auto *const deviceContext = GetDC(hwnd);
+
+	const auto pixelFormatNumber = ChoosePixelFormat(deviceContext, &pfd);
+	
+	SetPixelFormat(deviceContext, pixelFormatNumber, &pfd);
+	const auto glContext = wglCreateContext(GetDC(hwnd));
+	wglMakeCurrent(deviceContext, glContext);
+
+
+	gladLoaderLoadGL();
+	
+	printf("Created OpenGL context!\n");
+	
 	MSG msg;
 
 	ShowWindow(hwnd, SW_SHOW);
@@ -163,6 +201,7 @@ void Win32Window::Run()
 		else
 		{
 			renderFunction();
+			SwapBuffers(deviceContext);
 		}
 	}
 
@@ -173,6 +212,11 @@ void Win32Window::Destroy()
 {
 	printf("Destroying Window...\n");
 
+	printf("Unregistering OpenGL context...\n");
+
+	printf("Unregistered OpenGL context!\n");
+
+	
 	DestroyWindow(hwnd);
 	HandleError("DestroyWindow");
 

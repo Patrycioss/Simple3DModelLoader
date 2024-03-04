@@ -1,55 +1,44 @@
-﻿#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+﻿#include <cstdio>
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
 #include "window/window.hpp"
 
-#include <iostream>
 #include <functional>
 
-#include "window/impl/GlfwImpl.hpp"
-#include "window/impl/Win32Window.hpp"
+#define WINDOWTYPE 0
 
-void TestStuff()
-{
-	uint32_t extensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-
-	std::cout << extensionCount << " extensions supported\n";
-
-	glm::mat4 matrix = glm::mat4{4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4};
-	glm::vec4 vec = glm::vec4{5,5,5,5};
-	const auto test = matrix * vec;
-	printf("%f", test.x);
-}
-
-void Update()
-{
-	printf("Updating...\n");
-}
+#if WINDOWTYPE == 0
+	#include "window/impl/GlfwWindow.hpp"
+#else
+	#include "window/impl/Win32Window.hpp"
+	#include <glad/gl.h>
+#endif
 
 int main()
 {
-	glewInit();
-	
-	Window* window = new Win32Window(Update);
-	
-	window->Setup(800, 600);
+	Window* window;
 
-	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.0f,  0.5f, 0.0f
-	}; 
-
+	auto renderFunction = []()
+	{
+		printf("hahaha \n");
+		
+		glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
+		glClear(GL_COLOR_BUFFER_BIT);
+	};
 	
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);  
+#if WINDOWTYPE == 0
+	constexpr Vec2 windowSize{800,600};
+	constexpr auto windowTitle = "GLFW Window";
+	window = new GlfwWindow(windowSize, windowTitle, renderFunction);
 
-	// TestStuff();
+#else
+	constexpr Vec2 windowSize{800,600};
+	constexpr auto windowTitle = "Win32 Window";
+	window = new Win32Window(windowSize, windowTitle, renderFunction);
+
+#endif
+	
+	window->Setup();
+
 	window->Run();
 	window->Destroy();
 
