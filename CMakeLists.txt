@@ -14,7 +14,14 @@ add_executable(VulkanCPP src/main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/glad/src/gl.c
         ${CMAKE_CURRENT_SOURCE_DIR}/glad/src/vulkan.c
         src/data/Vec2.hpp
+        src/FileReader.cpp
+        src/FileReader.hpp
+        src/GlHelper.cpp
+        src/GlHelper.hpp
 )
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(glfw)
 

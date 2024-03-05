@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../window.hpp"
+#include <glad/gl.h>
 #include "GLFW/glfw3.h"
 
 class GlfwWindow : public Window

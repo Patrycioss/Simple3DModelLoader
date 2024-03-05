@@ -3,6 +3,7 @@
 #include "../window.hpp"
 
 #define WIN32_LEAN_AND_MEAN
+#include <glad/gl.h>
 #include <Windows.h>
 
 class Win32Window : public Window

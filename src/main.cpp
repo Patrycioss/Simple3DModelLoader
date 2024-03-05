@@ -1,8 +1,10 @@
-﻿#include <cstdio>
-
-#include "window/window.hpp"
-
+﻿
+#include <cstdio>
 #include <functional>
+
+#include "FileReader.hpp"
+#include "GlHelper.hpp"
+#include "window/window.hpp"
 
 #define WINDOWTYPE 0
 
@@ -10,7 +12,6 @@
 	#include "window/impl/GlfwWindow.hpp"
 #else
 	#include "window/impl/Win32Window.hpp"
-	#include <glad/gl.h>
 #endif
 
 int main()
@@ -36,11 +37,11 @@ int main()
 	window = new Win32Window(windowSize, windowTitle, renderFunction);
 
 #endif
-	
-	window->Setup();
 
+	window->Setup();
 	window->Run();
 	window->Destroy();
+
 
 	return 0;
 }

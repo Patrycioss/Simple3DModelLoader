@@ -2,6 +2,22 @@
 
 #include <cstdio>
 
+#include "../../GlHelper.hpp"
+
+auto vertexShaderSource = "#version 330 core\n"
+	"layout (location = 0) in vec3 aPos;\n"
+	"void main()\n"
+	"{\n"
+	"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+	"}\0";
+
+auto fragmentShaderSource = "#version 330 core\n"
+	"out vec4 FragColor;\n"
+	"void main()\n"
+	"{\n"
+	"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"}\0";
+
 void processInput(GLFWwindow* window)
 {
 	
@@ -24,12 +40,11 @@ void GlfwWindow::Setup()
 	printf("Setting up Window...\n");
 
 	glfwInit();
-	constexpr Vec2 GL_VERSION_NUMBER{4,3};
+	constexpr Vec2 GL_VERSION_NUMBER{4,6};
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSION_NUMBER.X);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_NUMBER.Y);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-	// glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
 	printf("Set up Window!\n");
 }
 
@@ -45,22 +60,43 @@ void GlfwWindow::Run()
 	}
 	
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	gladLoadGL(glfwGetProcAddress);
+
+	constexpr float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), nullptr);
+	glEnableVertexAttribArray(0);
+
+	const u_int64 shaderProgram = GlHelper::CreateShaderProgram();
+	glLinkProgram(shaderProgram);
 	
 	while (glfwWindowShouldClose(window) == 0)
 	{
 		// Input
 		processInput(window);
-		
+
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
 		renderFunction();
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		
 		// Call events, swap buffers
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
-
-	
-	glfwPollEvents();
 }
 
 void GlfwWindow::Destroy()

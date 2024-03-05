@@ -178,10 +178,9 @@ void Win32Window::Run()
 	const auto pixelFormatNumber = ChoosePixelFormat(deviceContext, &pfd);
 	
 	SetPixelFormat(deviceContext, pixelFormatNumber, &pfd);
-	const auto glContext = wglCreateContext(GetDC(hwnd));
+	auto *const glContext = wglCreateContext(GetDC(hwnd));
 	wglMakeCurrent(deviceContext, glContext);
-
-
+	
 	gladLoaderLoadGL();
 	
 	printf("Created OpenGL context!\n");
@@ -213,7 +212,7 @@ void Win32Window::Destroy()
 	printf("Destroying Window...\n");
 
 	printf("Unregistering OpenGL context...\n");
-
+	wglDeleteContext(wglGetCurrentContext());
 	printf("Unregistered OpenGL context!\n");
 
 	
