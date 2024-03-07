@@ -2,7 +2,6 @@
 #include <cstdio>
 #include <functional>
 
-#include "FileReader.hpp"
 #include "ShaderProgram.hpp"
 #include "window/window.hpp"
 

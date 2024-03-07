@@ -206,8 +206,6 @@ void Win32Window::Run()
 
 	ShaderProgram shaderProgram({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
 	
-	glLinkProgram(shaderProgram.GetID());
-	
 	MSG msg;
 
 	ShowWindow(hwnd, SW_SHOW);

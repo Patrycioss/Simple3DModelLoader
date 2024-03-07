@@ -1,26 +1,17 @@
 ﻿#include "ShaderProgram.hpp"
-#include "FileReader.hpp"
 
 #include <glad/gl.h>
 #include <utility>
 
+#include "asyncoperations/ReadOperation.hpp"
+
 constexpr const char* SHADER_FOLDER_PATH = "resources/shaders/";
 constexpr const char* SHADER_EXTENSION = ".glsl";
 
-class ShaderProgramException final : public std::exception
+class ShaderProgramException final : public std::runtime_error
 {
-	const char* message;
-
 public:
-	explicit ShaderProgramException(const std::string& message)
-	{
-		this->message = message.c_str();
-	}
-	
-	[[nodiscard]] const char* what() const noexcept override
-	{
-		return message;
-	}
+	explicit ShaderProgramException(const std::string& message) : runtime_error(message){}
 };
 
 void DebugShader(const unsigned int shader, const char* name)
@@ -40,13 +31,15 @@ void DebugShaderProgram(const unsigned int program)
 {
 	int  success;
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	printf("success? %d", success);
 
-	// if(!success)
-	// {
-	// 	char infoLog[512];
-	// 	glGetShaderInfoLog(program, 512, nullptr, infoLog);
-	// 	throw ShaderProgramException("Failed to link shader program with info: \n'" + std::string(infoLog) +"'\n");
-	// }
+	if(!success)
+	{
+		char infoLog[512];
+		glGetProgramInfoLog(program, 512, nullptr, infoLog);
+		printf(infoLog);
+		throw ShaderProgramException("Failed to link shader program with info: \n'" + std::string(infoLog) +"'\n");
+	}
 }
 
 unsigned int& ShaderProgram::GetID()
@@ -56,28 +49,13 @@ unsigned int& ShaderProgram::GetID()
 
 ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
 {
-	const auto vertexHandle = FileReader::Read(pathContainer.vertexShaderPath);
-	const auto fragmentHandle = FileReader::Read(pathContainer.fragmentShaderPath);
+	ReadOperation readVertexOperation{pathContainer.vertexShaderPath};
+	ReadOperation readFragmentOperation{pathContainer.fragmentShaderPath};
 
-	std::string vertexShaderSource;
-	std::string fragmentShaderSource;
-	
-	if (FileReader::HasHandle(vertexHandle))
-	{
-		FileReader::WaitForRead(vertexHandle);
-		vertexShaderSource = FileReader::Result(vertexHandle);
-		FileReader::Clear(vertexHandle);
-	}
-
+	const std::string vertexShaderSource = readVertexOperation.AwaitResult();
 	printf("Loaded vertex shader source:\n %s\n", vertexShaderSource.c_str());
-	
-	if (FileReader::HasHandle(fragmentHandle))
-	{
-		FileReader::WaitForRead(fragmentHandle);
-		fragmentShaderSource = FileReader::Result(fragmentHandle);
-		FileReader::Clear(fragmentHandle);
-	}
-	
+
+	const std::string fragmentShaderSource = readFragmentOperation.AwaitResult();
 	printf("Loaded fragment shader source:\n %s\n", fragmentShaderSource.c_str());
 
 	const char* vertSSource = vertexShaderSource.c_str();
@@ -98,8 +76,7 @@ ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
 	ID = glCreateProgram();
 	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
-
-	DebugShaderProgram(ID);
+	glLinkProgram(ID);
 		
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);

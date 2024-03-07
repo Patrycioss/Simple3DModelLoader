@@ -118,10 +118,7 @@ void GlfwWindow::Run()
 	glEnableVertexAttribArray(0);
 
 	ShaderProgram triangle1Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
-	glLinkProgram(triangle1Program.GetID());
-
 	ShaderProgram triangle2Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment2")});
-	glLinkProgram(triangle2Program.GetID());
 	
 	while (glfwWindowShouldClose(window) == 0)
 	{
@@ -134,13 +131,11 @@ void GlfwWindow::Run()
 		// draw first triangle using the data from the first VAO
 		glBindVertexArray(VAOs[0]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-
 		
 		// then we draw the second triangle using the data from the second VAO
 		glUseProgram(triangle2Program.GetID());
 		glBindVertexArray(VAOs[1]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
- 
 		
 		// Call events, swap buffers
 		glfwPollEvents();
