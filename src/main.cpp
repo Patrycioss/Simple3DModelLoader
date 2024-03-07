@@ -3,7 +3,7 @@
 #include <functional>
 
 #include "FileReader.hpp"
-#include "GlHelper.hpp"
+#include "ShaderProgram.hpp"
 #include "window/window.hpp"
 
 #define WINDOWTYPE 0

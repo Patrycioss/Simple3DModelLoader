@@ -2,7 +2,9 @@
 
 #include <iostream>
 #include <string>
+#include <_bsd_types.h>
 #include <glad/gl.h>
+#include "../../ShaderProgram.hpp"
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
@@ -68,7 +70,7 @@ void HandleError(const char* operation, const bool failure = false)
 
 LRESULT Win32Window::windowProcedure(const HWND hwnd, const UINT msg, const WPARAM wParam, const LPARAM lParam)
 {
-	printf("msg: 0x%04x \n", msg);
+	// printf("msg: 0x%04x \n", msg);
 	
 	switch (msg)
 	{
@@ -184,6 +186,27 @@ void Win32Window::Run()
 	gladLoaderLoadGL();
 	
 	printf("Created OpenGL context!\n");
+
+	constexpr float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), nullptr);
+	glEnableVertexAttribArray(0);
+
+	ShaderProgram shaderProgram({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
+	
+	glLinkProgram(shaderProgram.GetID());
 	
 	MSG msg;
 
@@ -199,7 +222,11 @@ void Win32Window::Run()
 		}
 		else
 		{
+			glUseProgram(shaderProgram.GetID());
+			glBindVertexArray(VAO);
 			renderFunction();
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+
 			SwapBuffers(deviceContext);
 		}
 	}

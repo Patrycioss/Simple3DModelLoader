@@ -6,7 +6,7 @@
 #include <glad/gl.h>
 #include <Windows.h>
 
-class Win32Window : public Window
+class Win32Window final : public Window
 {
 private:
 	WNDCLASSEX window{};

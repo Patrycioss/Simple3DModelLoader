@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-#include "../../GlHelper.hpp"
+#include "../../ShaderProgram.hpp"
 
 auto vertexShaderSource = "#version 330 core\n"
 	"layout (location = 0) in vec3 aPos;\n"
@@ -63,40 +63,94 @@ void GlfwWindow::Run()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	gladLoadGL(glfwGetProcAddress);
 
+	
 	constexpr float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.0f,  0.5f, 0.0f
+		0.5f,  0.5f, 0.0f,  // top right
+		0.5f, -0.5f, 0.0f,  // bottom right
+	   -0.5f, -0.5f, 0.0f,  // bottom left
+	   -0.5f,  0.5f, 0.0f   // top left 
+   };
+
+	constexpr unsigned int indices[] = {  // note that we start from 0!
+		0, 1, 3,   // first triangle
+		1, 2, 3    // second triangle
 	};
 
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	constexpr float firstTriangle[] = {
+		-0.9f, -0.5f, 0.0f,  // left 
+		-0.0f, -0.5f, 0.0f,  // right
+		-0.45f, 0.5f, 0.0f,  // top 
+	};
 	
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	constexpr float secondTriangle[] = {
+		0.0f, -0.5f, 0.0f,  // left
+		0.9f, -0.5f, 0.0f,  // right
+		0.45f, 0.5f, 0.0f   // top 
+	};
+
+	unsigned int VBOs[2], VAOs[2];
+	glGenVertexArrays(2, VAOs);
+	glGenBuffers(2, VBOs);
+
+	// Triangle 1
+	glBindVertexArray(VAOs[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
 
-	const u_int64 shaderProgram = GlHelper::CreateShaderProgram();
-	glLinkProgram(shaderProgram);
+	// Triangle 2
+	glBindVertexArray(VAOs[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangle), secondTriangle, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), nullptr);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+	
+
+	// unsigned int EBO;
+	// glGenBuffers(1, &EBO);
+	
+	unsigned int VBO;
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+
+	ShaderProgram triangle1Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
+	glLinkProgram(triangle1Program.GetID());
+
+	ShaderProgram triangle2Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment2")});
+	glLinkProgram(triangle2Program.GetID());
 	
 	while (glfwWindowShouldClose(window) == 0)
 	{
 		// Input
 		processInput(window);
 
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
+		glUseProgram(triangle1Program.GetID());
+
 		renderFunction();
+		// draw first triangle using the data from the first VAO
+		glBindVertexArray(VAOs[0]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		
+		// then we draw the second triangle using the data from the second VAO
+		glUseProgram(triangle2Program.GetID());
+		glBindVertexArray(VAOs[1]);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+ 
 		
 		// Call events, swap buffers
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
+	
+	glDeleteVertexArrays(2, VAOs);
+	glDeleteBuffers(2, VBOs);
+	glDeleteProgram(triangle1Program.GetID());
+	glDeleteProgram(triangle2Program.GetID());
 }
 
 void GlfwWindow::Destroy()

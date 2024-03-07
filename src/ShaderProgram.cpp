@@ -1,11 +1,27 @@
-﻿#include "GlHelper.hpp"
-
-#include <glad/gl.h>
-
+﻿#include "ShaderProgram.hpp"
 #include "FileReader.hpp"
 
-constexpr const char* VERTEX_SHADER_PATH = "resources/shaders/vertex.glsl";
-constexpr const char* FRAGMENT_SHADER_PATH = "resources/shaders/fragment.glsl";
+#include <glad/gl.h>
+#include <utility>
+
+constexpr const char* SHADER_FOLDER_PATH = "resources/shaders/";
+constexpr const char* SHADER_EXTENSION = ".glsl";
+
+class ShaderProgramException final : public std::exception
+{
+	const char* message;
+
+public:
+	explicit ShaderProgramException(const std::string& message)
+	{
+		this->message = message.c_str();
+	}
+	
+	[[nodiscard]] const char* what() const noexcept override
+	{
+		return message;
+	}
+};
 
 void DebugShader(const unsigned int shader, const char* name)
 {
@@ -16,7 +32,7 @@ void DebugShader(const unsigned int shader, const char* name)
 	{
 		char infoLog[512];
 		glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-		printf("ERROR::SHADER::%s::COMPILATION_FAILED\n%s\n", name, infoLog);
+		throw ShaderProgramException("Failed to compile shader '" + std::string(name) + "' with info: \n'" + std::string(infoLog) +"'\n");
 	}
 }
 
@@ -25,19 +41,23 @@ void DebugShaderProgram(const unsigned int program)
 	int  success;
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 
-	if(!success)
-	{
-		char infoLog[512];
-		glGetShaderInfoLog(program, 512, nullptr, infoLog);
-		printf("ERROR::SHADERPROGRAM::LINKING_FAILED\n%s\n", std::string(infoLog).c_str());
-	}
+	// if(!success)
+	// {
+	// 	char infoLog[512];
+	// 	glGetShaderInfoLog(program, 512, nullptr, infoLog);
+	// 	throw ShaderProgramException("Failed to link shader program with info: \n'" + std::string(infoLog) +"'\n");
+	// }
 }
 
-[[nodiscard]]
-u_int64 GlHelper::CreateShaderProgram()
+unsigned int& ShaderProgram::GetID()
 {
-	const auto vertexHandle = FileReader::Read(VERTEX_SHADER_PATH);
-	const auto fragmentHandle = FileReader::Read(FRAGMENT_SHADER_PATH);
+	return ID;
+}
+
+ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
+{
+	const auto vertexHandle = FileReader::Read(pathContainer.vertexShaderPath);
+	const auto fragmentHandle = FileReader::Read(pathContainer.fragmentShaderPath);
 
 	std::string vertexShaderSource;
 	std::string fragmentShaderSource;
@@ -75,14 +95,21 @@ u_int64 GlHelper::CreateShaderProgram()
 
 	DebugShader(fragmentShader, "FRAGMENT");
 	
-	const unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	ID = glCreateProgram();
+	glAttachShader(ID, vertexShader);
+	glAttachShader(ID, fragmentShader);
 
-	DebugShaderProgram(shaderProgram);
+	DebugShaderProgram(ID);
 		
 	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);  
-	
-	return shaderProgram;
+	glDeleteShader(fragmentShader);
+}
+
+[[nodiscard]]
+std::string ShaderProgram::MakeShaderPath(const char* shaderName)
+{
+	std::string path = std::string(SHADER_FOLDER_PATH);
+	path.append(shaderName);
+	path.append(SHADER_EXTENSION);
+	return path;
 }

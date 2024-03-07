@@ -18,7 +18,7 @@ private:
 	static std::unordered_map<u_int64,Reader> activeReaders;
 	
 public:
-	static u_int64 Read(const char* path);
+	static u_int64 Read(const std::string& path);
 	static std::string Result(u_int64 handle);
 	static bool HasHandle(u_int64 handle);
 	static void Clear(u_int64 handle);

@@ -5,7 +5,7 @@
 u_int64 FileReader::lastIndex = 0;
 std::unordered_map<u_int64,FileReader::Reader> FileReader::activeReaders{};
 
-void InternalReadFile(const char* path, std::string*& result)
+void InternalReadFile(const std::string& path, std::string*& result)
 {
 	std::ifstream file;
 
@@ -25,15 +25,14 @@ void InternalReadFile(const char* path, std::string*& result)
 	result = new std::string(contents);
 }
 
-
-u_int64 FileReader::Read(const char* path)
+u_int64 FileReader::Read(const std::string& path)
 {
 	const u_int64 index = lastIndex++;
 	
 	activeReaders.insert({index, Reader{}});
 
 	auto& entry = activeReaders.at(index);
-	entry.thread = new std::thread(InternalReadFile, path, std::ref(entry.result));
+	entry.thread = new std::thread(InternalReadFile, std::ref(path), std::ref(entry.result));
 
 	return index;
 }
