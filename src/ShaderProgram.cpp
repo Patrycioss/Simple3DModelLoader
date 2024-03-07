@@ -31,7 +31,6 @@ void DebugShaderProgram(const unsigned int program)
 {
 	int  success;
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	printf("success? %d", success);
 
 	if(!success)
 	{
