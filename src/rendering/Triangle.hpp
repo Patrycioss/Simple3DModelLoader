@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "data/Vec2.hpp"
+#include "../data/Vec2.hpp"
 
 
 class Triangle 

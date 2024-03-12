@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-#include "../../ShaderProgram.hpp"
+#include "../../rendering/ShaderProgram.hpp"
 
 void processInput(GLFWwindow* window)
 {

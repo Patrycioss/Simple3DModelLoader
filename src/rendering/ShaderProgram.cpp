@@ -3,7 +3,7 @@
 #include <glad/gl.h>
 #include <utility>
 
-#include "asyncoperations/ReadOperation.hpp"
+#include "../asyncoperations/ReadOperation.hpp"
 
 constexpr const char* SHADER_FOLDER_PATH = "resources/shaders/";
 constexpr const char* SHADER_EXTENSION = ".glsl";

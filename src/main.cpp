@@ -2,8 +2,8 @@
 #include <cstdio>
 #include <functional>
 
-#include "ShaderProgram.hpp"
-#include "Triangle.hpp"
+#include "rendering/ShaderProgram.hpp"
+#include "rendering/Triangle.hpp"
 #include "window/window.hpp"
 #include "glad/gl.h"
 

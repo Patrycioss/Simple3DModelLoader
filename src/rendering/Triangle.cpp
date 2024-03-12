@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-#include "data/Vec2.hpp"
+#include "../data/Vec2.hpp"
 
 Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<float> top)
 {

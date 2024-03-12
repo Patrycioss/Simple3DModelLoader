@@ -11,10 +11,9 @@ add_executable(VulkanCPP src/main.cpp
         src/window/impl/Win32Window.cpp
         glad/src/gl.c
         glad/src/vulkan.c
-        src/ShaderProgram.cpp
+        src/rendering/ShaderProgram.cpp
         src/asyncoperations/ReadOperation.cpp
-        src/Triangle.cpp
-        src/Triangle.hpp
+        src/rendering/Triangle.cpp
 )
 
 file(COPY resources
