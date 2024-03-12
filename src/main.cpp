@@ -1,4 +1,5 @@
 ﻿
+#include <cmath>
 #include <cstdio>
 #include <functional>
 
@@ -39,6 +40,8 @@ int main()
 	ShaderProgram triangle1Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
 	ShaderProgram triangle2Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment2")});
 
+	const int colorLocation = triangle2Program.GetUniformLocation("newColor");
+	
 	while (!window->ShouldClose())
 	{
 		window->Preframe();
@@ -51,6 +54,11 @@ int main()
 		triangle1.Draw();
 
 		glUseProgram(triangle2Program.GetID());
+		
+		const auto timeValue = static_cast<float>(glfwGetTime());
+		float greenValue = std::sin(timeValue) / 2.0f + 0.5f;
+		glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
 		triangle2.Draw();
 		rectangle.Draw();
 
