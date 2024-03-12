@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "../window.hpp"
-#include <glad/gl.h>
+#include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
 class GlfwWindow : public Window
@@ -11,8 +11,9 @@ private:
 	const char* windowTitle = nullptr;
 
 public:
-	explicit GlfwWindow(const Vec2<int>& size, const char* windowTitle, const std::function<void()>& renderFunction);
-	void Setup() override;
-	void Run() override;
+	explicit GlfwWindow(const Vec2<int>& size, const char* windowTitle);
 	void Destroy() override;
+	void Preframe() override;
+	void Postframe() override;
+	bool ShouldClose() override;
 };
