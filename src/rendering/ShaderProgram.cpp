@@ -46,6 +46,18 @@ unsigned int& ShaderProgram::GetID()
 	return ID;
 }
 
+[[nodiscard]] int ShaderProgram::GetUniformLocation(const char* uniform) const
+{
+	const int location = glGetUniformLocation(ID, uniform);
+
+	if (location == -1)
+	{
+		throw ShaderProgramException("Failed to get location of uniform with name: '" + std::string(uniform) + "'\n");
+	}
+
+	return location;
+}
+
 ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
 {
 	ReadOperation readVertexOperation{pathContainer.vertexShaderPath};
