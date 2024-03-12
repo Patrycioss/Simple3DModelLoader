@@ -14,6 +14,7 @@ add_executable(VulkanCPP src/main.cpp
         src/rendering/ShaderProgram.cpp
         src/asyncoperations/ReadOperation.cpp
         src/rendering/Triangle.cpp
+        src/rendering/Rectangle.cpp
 )
 
 file(COPY resources

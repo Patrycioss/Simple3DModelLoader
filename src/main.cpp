@@ -6,6 +6,7 @@
 #include "rendering/Triangle.hpp"
 #include "window/window.hpp"
 #include "glad/gl.h"
+#include "rendering/Rectangle.hpp"
 
 #define WINDOWTYPE 0
 
@@ -33,6 +34,7 @@ int main()
 	
 	const Triangle triangle1{{-0.9f, -0.5f}, {-0.0f, -0.5f}, {-0.45f, 0.5f}};
 	const Triangle triangle2{{0.0f, -0.5f}, {0.9f, -0.5f}, {0.45f, 0.5f}};
+	const Rectangle rectangle{{-0.5f, 0.5f}, {-0.5f, -0.5f}, {0.5f, -0.5f}, {0.5f, 0.5f}};
 	
 	ShaderProgram triangle1Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
 	ShaderProgram triangle2Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment2")});
@@ -50,6 +52,7 @@ int main()
 
 		glUseProgram(triangle2Program.GetID());
 		triangle2.Draw();
+		rectangle.Draw();
 
 		window->Postframe();
 	}
