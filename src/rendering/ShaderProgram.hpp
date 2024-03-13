@@ -19,4 +19,5 @@ public:
 	void Use() const;
 	explicit ShaderProgram(const PathContainer& pathContainer);
 	static std::string MakeShaderPath(const char* shaderName);
+	~ShaderProgram();
 };
