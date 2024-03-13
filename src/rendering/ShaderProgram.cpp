@@ -58,6 +58,11 @@ unsigned int& ShaderProgram::GetID()
 	return location;
 }
 
+void ShaderProgram::Use() const
+{
+	glUseProgram(ID);
+}
+
 ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
 {
 	ReadOperation readVertexOperation{pathContainer.vertexShaderPath};

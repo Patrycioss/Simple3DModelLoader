@@ -50,11 +50,10 @@ int main()
 		glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(triangle1Program.GetID());
+		triangle1Program.Use();
 		triangle1.Draw();
 
-		glUseProgram(triangle2Program.GetID());
-		
+		triangle2Program.Use();
 		const auto timeValue = static_cast<float>(glfwGetTime());
 		float greenValue = std::sin(timeValue) / 2.0f + 0.5f;
 		glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
