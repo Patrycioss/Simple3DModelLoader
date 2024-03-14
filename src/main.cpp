@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <functional>
 
+#include "Material.hpp"
+#include "asyncoperations/ReadImageOperation.hpp"
 #include "rendering/ShaderProgram.hpp"
 #include "rendering/Triangle.hpp"
 #include "window/window.hpp"
@@ -32,15 +34,15 @@ int main()
 	window = new Win32Window(windowSize, windowTitle);
 
 #endif
+
 	
 	const Triangle triangle1{{-0.9f, -0.5f}, {-0.0f, -0.5f}, {-0.45f, 0.5f}};
 	const Triangle triangle2{{0.0f, -0.5f}, {0.9f, -0.5f}, {0.45f, 0.5f}};
 	const Rectangle rectangle{{-0.5f, 0.5f}, {-0.5f, -0.5f}, {0.5f, -0.5f}, {0.5f, 0.5f}};
-	
-	ShaderProgram triangle1Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
-	ShaderProgram triangle2Program({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment2")});
 
-	const int colorLocation = triangle2Program.GetUniformLocation("newColor");
+	const ShaderProgram basicProgram({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
+
+	Material material(basicProgram, "resources/textures/awesomeface.png");
 	
 	while (!window->ShouldClose())
 	{
@@ -50,23 +52,20 @@ int main()
 		glClearColor(0.2F, 0.3F, 0.3F, 1.0F);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		triangle1Program.Use();
-		triangle1.Draw();
-
-		triangle2Program.Use();
-		const auto timeValue = static_cast<float>(glfwGetTime());
-		float greenValue = std::sin(timeValue) / 2.0f + 0.5f;
-		glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
-		triangle2.Draw();
+		material.Apply();		
+		// triangle1.Draw();
 		rectangle.Draw();
+
+		// const auto timeValue = static_cast<float>(glfwGetTime());
+		// const float greenValue = std::sin(timeValue) / 2.0f + 0.5f;
+		// glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+		// triangle2.Draw();
+		// rectangle.Draw();
 
 		window->Postframe();
 	}
 
-	glDeleteProgram(triangle1Program.GetID());
-	glDeleteProgram(triangle2Program.GetID());
-	
 	window->Destroy();
 
 	delete(window);

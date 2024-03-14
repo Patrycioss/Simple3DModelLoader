@@ -6,10 +6,11 @@
 
 Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<float> top)
 {
-	const float triangle[9] = {
-		left.X, left.Y, 0.0f,
-		right.X, right.Y, 0.0f,
-		top.X, top.Y, 0.0f
+	const float triangle[] = {
+		// Positions			//Texture coords
+		 left.X,  left.Y, 0.0f, 0.0f, 0.0f, 
+		  top.X,   top.Y, 0.0f, 0.5f, 1.0f,
+		right.X, right.Y, 0.0f, 1.0f, 0.0f,
 	};
 
 	glGenVertexArrays(1, &VAO);
@@ -18,8 +19,15 @@ Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<f
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), nullptr);
+
+	// Position Attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
+
+	// Texture Coords Attribute
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);  
+	
 	glBindVertexArray(0);
 }
 

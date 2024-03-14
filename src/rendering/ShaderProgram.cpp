@@ -98,11 +98,15 @@ ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
 	glDeleteShader(fragmentShader);
 }
 
-[[nodiscard]]
-std::string ShaderProgram::MakeShaderPath(const char* shaderName)
+[[nodiscard]] std::string ShaderProgram::MakeShaderPath(const char* shaderName)
 {
 	std::string path = std::string(SHADER_FOLDER_PATH);
 	path.append(shaderName);
 	path.append(SHADER_EXTENSION);
 	return path;
+}
+
+ShaderProgram::~ShaderProgram()
+{
+	glDeleteProgram(ID);
 }
