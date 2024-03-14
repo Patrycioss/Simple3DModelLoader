@@ -4,7 +4,7 @@
 
 #include "../data/Vec2.hpp"
 
-Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<float> top)
+Shapes::Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<float> top)
 {
 	const float triangle[] = {
 		// Positions			//Texture coords
@@ -31,13 +31,13 @@ Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<f
 	glBindVertexArray(0);
 }
 
-void Triangle::Draw() const
+void Shapes::Triangle::Draw() const
 {
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-Triangle::~Triangle()
+Shapes::Triangle::~Triangle()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);

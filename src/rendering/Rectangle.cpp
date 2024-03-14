@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottomLeft, const Vec2<float> bottomRight, const Vec2<float> topRight)
+Shapes::Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottomLeft, const Vec2<float> bottomRight, const Vec2<float> topRight)
 {
 	const float rectangle[] = {
 			// Positions		 // TexCoords
@@ -40,13 +40,13 @@ Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottomLeft, co
 	glBindVertexArray(0);
 }
 
-void Rectangle::Draw() const
+void Shapes::Rectangle::Draw() const
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-Rectangle::~Rectangle()
+Shapes::Rectangle::~Rectangle()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);

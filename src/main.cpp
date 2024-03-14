@@ -11,7 +11,7 @@
 #include "glad/gl.h"
 #include "rendering/Rectangle.hpp"
 
-#define WINDOWTYPE 0
+#define WINDOWTYPE 1
 
 #if WINDOWTYPE == 0
 	#include "window/impl/GlfwWindow.hpp"
@@ -35,14 +35,13 @@ int main()
 
 #endif
 
-	
-	const Triangle triangle1{{-0.9f, -0.5f}, {-0.0f, -0.5f}, {-0.45f, 0.5f}};
-	const Triangle triangle2{{0.0f, -0.5f}, {0.9f, -0.5f}, {0.45f, 0.5f}};
-	const Rectangle rectangle{{-0.5f, 0.5f}, {-0.5f, -0.5f}, {0.5f, -0.5f}, {0.5f, 0.5f}};
+	const Shapes::Triangle triangle1{{-0.9f, -0.5f}, {-0.0f, -0.5f}, {-0.45f, 0.5f}};
+	const Shapes::Triangle triangle2{{0.0f, -0.5f}, {0.9f, -0.5f}, {0.45f, 0.5f}};
+	const Shapes::Rectangle rectangle{{-0.5f, 0.5f}, {-0.5f, -0.5f}, {0.5f, -0.5f}, {0.5f, 0.5f}};
 
 	const ShaderProgram basicProgram({ShaderProgram::MakeShaderPath("vertex"), ShaderProgram::MakeShaderPath("fragment")});
 
-	Material material(basicProgram, "resources/textures/awesomeface.png");
+	const Material material(basicProgram, "resources/textures/awesomeface.png");
 	
 	while (!window->ShouldClose())
 	{
@@ -53,15 +52,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		material.Apply();		
-		// triangle1.Draw();
+
 		rectangle.Draw();
-
-		// const auto timeValue = static_cast<float>(glfwGetTime());
-		// const float greenValue = std::sin(timeValue) / 2.0f + 0.5f;
-		// glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
-		// triangle2.Draw();
-		// rectangle.Draw();
 
 		window->Postframe();
 	}
