@@ -7,8 +7,6 @@ find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_executable(VulkanCPP src/main.cpp
-        src/window/impl/GlfwWindow.cpp
-        src/window/impl/Win32Window.cpp
         glad/src/gl.c
         glad/src/vulkan.c
         src/rendering/ShaderProgram.cpp
@@ -19,8 +17,8 @@ add_executable(VulkanCPP src/main.cpp
         src/Material.cpp
         src/Texture.cpp
         src/rendering/GLCube.cpp
-        src/rendering/GLCube.hpp
-        src/KeyCode.hpp
+        src/window/Window.cpp
+        src/window/Window.hpp
 )
 
 file(COPY resources

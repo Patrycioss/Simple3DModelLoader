@@ -1,24 +1,25 @@
 ﻿#pragma once
 
-#include "../data/Vec2.hpp"
-
-enum class KeyCode;
+#include <glm/vec2.hpp>
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 class Window
 {
-public:
-	
-	
-protected:
-	Vec2<int> size;
-	
-public:
-	virtual void Preframe() = 0;
-	virtual void Postframe() = 0;
-	virtual void Destroy() = 0;
-	virtual bool ShouldClose() = 0;
+private:
+	GLFWwindow* window = nullptr;
+	const char* windowTitle = nullptr;
 
-	Vec2<int> Size();
+	glm::vec2 size;
+	
+	bool InternalGetKey(int glfwKey) const;
 
-	virtual bool GetKey(KeyCode keyCode) = 0;
+public:
+	explicit Window(glm::vec2 size, const char* windowTitle);
+	void Destroy() const;
+	void Preframe() const;
+	void Postframe() const;
+	bool ShouldClose() const;
+	bool GetKey(int glfwKey, int glfwKeyState = GLFW_PRESS) const;
+	~Window();
 };
