@@ -2,14 +2,8 @@
 
 #include <cstdio>
 #include <functional>
-#include <stdexcept>
 
 #include "../rendering/ShaderProgram.hpp"
-
-void processInput(GLFWwindow* window)
-{
-	
-}
 
 void framebuffer_size_callback(GLFWwindow* window, const int width, const int height)
 {
@@ -19,6 +13,11 @@ void framebuffer_size_callback(GLFWwindow* window, const int width, const int he
 bool Window::InternalGetKey(const int glfwKey) const
 {
 	return glfwGetKey(window, glfwKey) == GLFW_PRESS;
+}
+
+void Window::MouseCallbacK(GLFWwindow* window, double xpos, double ypos) const
+{
+	printf("Member!");
 }
 
 Window::Window(const glm::vec2 size, const char* windowTitle)
@@ -48,11 +47,15 @@ Window::Window(const glm::vec2 size, const char* windowTitle)
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	gladLoadGL(glfwGetProcAddress);
-}
 
-void Window::Preframe() const
-{
-	processInput(window);
+	glfwSetWindowUserPointer(window, this);
+	
+	auto func = [](GLFWwindow* w, const double x, const double y)
+	{
+		static_cast<Window*>(glfwGetWindowUserPointer(w))->MouseCallbacK(w, x, y);
+	};
+	
+	glfwSetCursorPosCallback(window, func);
 }
 
 void Window::Postframe() const

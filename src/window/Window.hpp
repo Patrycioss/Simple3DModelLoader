@@ -13,11 +13,10 @@ private:
 	glm::vec2 size;
 	
 	bool InternalGetKey(int glfwKey) const;
+	void MouseCallbacK(GLFWwindow* window, double xpos, double ypos) const;
 
 public:
 	explicit Window(glm::vec2 size, const char* windowTitle);
-	void Destroy() const;
-	void Preframe() const;
 	void Postframe() const;
 	bool ShouldClose() const;
 	bool GetKey(int glfwKey, int glfwKeyState = GLFW_PRESS) const;

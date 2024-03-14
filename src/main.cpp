@@ -82,8 +82,6 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;  
 		
-		window.Preframe();
-
 		float cameraSpeed = 10 * deltaTime;
 		if (window.GetKey(GLFW_KEY_W))
 		{
