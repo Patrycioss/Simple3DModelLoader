@@ -63,10 +63,10 @@ void ShaderProgram::Use() const
 	glUseProgram(ID);
 }
 
-ShaderProgram::ShaderProgram(const PathContainer& pathContainer)
+ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	ReadOperation readVertexOperation{pathContainer.vertexShaderPath};
-	ReadOperation readFragmentOperation{pathContainer.fragmentShaderPath};
+	ReadOperation readVertexOperation{vertexPath};
+	ReadOperation readFragmentOperation{fragmentPath};
 
 	const std::string vertexShaderSource = readVertexOperation.AwaitResult();
 	printf("Loaded vertex shader source:\n %s\n", vertexShaderSource.c_str());

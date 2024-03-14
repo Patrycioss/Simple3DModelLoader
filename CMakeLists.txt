@@ -17,6 +17,7 @@ add_executable(VulkanCPP src/main.cpp
         src/rendering/Rectangle.cpp
         src/asyncoperations/ReadImageOperation.cpp
         src/Material.cpp
+        src/Texture.cpp
 )
 
 file(COPY resources
