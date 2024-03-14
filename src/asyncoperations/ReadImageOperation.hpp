@@ -28,6 +28,5 @@ private:
 public:
 	explicit ReadImageOperation(std::string filePath, bool flipVertically = true);
 	[[nodiscard]] ImageInfo AwaitResult();
-	void Free() const;
-	// ~ReadImageOperation();
+	~ReadImageOperation();
 };

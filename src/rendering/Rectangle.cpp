@@ -5,11 +5,11 @@
 Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottomLeft, const Vec2<float> bottomRight, const Vec2<float> topRight)
 {
 	const float rectangle[] = {
-			// Positions				       // Colors      // TexCoords
-		   topRight.X,    topRight.Y, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-		bottomRight.X, bottomRight.Y, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-		 bottomLeft.X,  bottomLeft.Y, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-			topLeft.X,     topLeft.Y, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+			// Positions		 // TexCoords
+		   topRight.X,    topRight.Y, 0.0f, 1.0f, 1.0f,
+		bottomRight.X, bottomRight.Y, 0.0f, 1.0f, 0.0f,
+		 bottomLeft.X,  bottomLeft.Y, 0.0f, 0.0f, 0.0f,
+			topLeft.X,     topLeft.Y, 0.0f, 0.0f, 1.0f,
 	};
 
 	constexpr unsigned int indices[] = {
@@ -30,16 +30,12 @@ Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottomLeft, co
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//Positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * sizeof(float), nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(0);
 
-	//Colours
-	glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
 	//TexCoords
-	glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * sizeof(float), reinterpret_cast<void*>(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
 }

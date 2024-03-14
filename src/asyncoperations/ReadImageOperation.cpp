@@ -12,7 +12,7 @@ void ReadImageOperation::ReadFile()
 }
 
 ReadImageOperation::ReadImageOperation(std::string filePath, const bool flipVertically)
-	: filePath(std::move(filePath)), flipVertical(flipVertically)
+	: flipVertical(flipVertically), filePath(std::move(filePath))
 {
 	thread = std::thread(&ReadFile, this);
 }
@@ -23,7 +23,7 @@ ReadImageOperation::ImageInfo ReadImageOperation::AwaitResult()
 	return {data, width, height, nrChannels};
 }
 
-void ReadImageOperation::Free() const
+ReadImageOperation::~ReadImageOperation()
 {
 	stbi_image_free(data);
 }
