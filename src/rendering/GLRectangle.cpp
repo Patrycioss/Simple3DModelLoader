@@ -1,15 +1,15 @@
-﻿#include "Rectangle.hpp"
+﻿#include "GLRectangle.hpp"
 
 #include <glad/gl.h>
 
-Shapes::Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottomLeft, const Vec2<float> bottomRight, const Vec2<float> topRight)
+GLShapes::GLRectangle::GLRectangle()
 {
-	const float rectangle[] = {
-			// Positions		 // TexCoords
-		   topRight.X,    topRight.Y, 0.0f, 1.0f, 1.0f,
-		bottomRight.X, bottomRight.Y, 0.0f, 1.0f, 0.0f,
-		 bottomLeft.X,  bottomLeft.Y, 0.0f, 0.0f, 0.0f,
-			topLeft.X,     topLeft.Y, 0.0f, 0.0f, 1.0f,
+	constexpr float rectangle[] = {
+			// Positions	// TexCoords
+		-0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		 0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+		 0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
 	};
 
 	constexpr unsigned int indices[] = {
@@ -40,13 +40,13 @@ Shapes::Rectangle::Rectangle(const Vec2<float> topLeft, const Vec2<float> bottom
 	glBindVertexArray(0);
 }
 
-void Shapes::Rectangle::Draw() const
+void GLShapes::GLRectangle::Draw() const
 {
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-Shapes::Rectangle::~Rectangle()
+GLShapes::GLRectangle::~GLRectangle()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);

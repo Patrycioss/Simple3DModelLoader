@@ -23,6 +23,10 @@ Texture::Texture(std::string path,
 	}
 }
 
+Texture::Texture()
+{
+}
+
 void Texture::SetWrappingMethod(WrappingMethod wrappingMethod) const
 {
 	glBindTexture(GL_TEXTURE_2D, textureHandle);

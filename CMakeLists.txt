@@ -13,11 +13,14 @@ add_executable(VulkanCPP src/main.cpp
         glad/src/vulkan.c
         src/rendering/ShaderProgram.cpp
         src/asyncoperations/ReadOperation.cpp
-        src/rendering/Triangle.cpp
-        src/rendering/Rectangle.cpp
+        src/rendering/GLTriangle.cpp
+        src/rendering/GLRectangle.cpp
         src/asyncoperations/ReadImageOperation.cpp
         src/Material.cpp
         src/Texture.cpp
+        src/rendering/GLCube.cpp
+        src/rendering/GLCube.hpp
+        src/KeyCode.hpp
 )
 
 file(COPY resources

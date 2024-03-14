@@ -28,6 +28,8 @@ public:
 	                 FilteringMethod filteringMethod = FilteringMethod::Linear
 	);
 
+	explicit Texture();
+
 	void SetWrappingMethod(WrappingMethod wrappingMethod) const;
 	void SetFilteringMethod(FilteringMethod filteringMethod) const;
 	void Bind() const;

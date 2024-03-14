@@ -46,7 +46,7 @@ unsigned int& ShaderProgram::GetID()
 	return ID;
 }
 
-[[nodiscard]] int ShaderProgram::GetUniformLocation(const char* uniform) const
+[[nodiscard]] unsigned int ShaderProgram::GetUniformLocation(const char* uniform) const
 {
 	const int location = glGetUniformLocation(ID, uniform);
 
@@ -62,6 +62,7 @@ void ShaderProgram::Use() const
 {
 	glUseProgram(ID);
 }
+
 
 ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
@@ -96,6 +97,11 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 		
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+}
+
+ShaderProgram::ShaderProgram()
+{
+	
 }
 
 [[nodiscard]] std::string ShaderProgram::MakeShaderPath(const char* shaderName)
