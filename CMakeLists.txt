@@ -6,19 +6,23 @@ set(CMAKE_CXX_STANDARD 23)
 find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
 
+
 add_executable(VulkanCPP src/main.cpp
-        src/window/impl/GlfwWindow.cpp
-        src/window/impl/Win32Window.cpp
         glad/src/gl.c
         glad/src/vulkan.c
         src/rendering/ShaderProgram.cpp
         src/asyncoperations/ReadOperation.cpp
-        src/rendering/Triangle.cpp
-        src/rendering/Rectangle.cpp
+        src/rendering/GLTriangle.cpp
+        src/rendering/GLRectangle.cpp
         src/asyncoperations/ReadImageOperation.cpp
         src/Material.cpp
         src/Texture.cpp
+        src/rendering/GLCube.cpp
+        src/window/Window.cpp
+        src/window/Window.hpp
+        src/Camera.cpp
 )
+
 
 file(COPY resources
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -33,9 +37,13 @@ target_include_directories(
         ${Vulkan_INCLUDE_DIRS}
         glad/include
 )
+
+set(CMAKE_EXE_LINKER_FLAGS " -static")
+
 target_link_libraries(
-        VulkanCPP 
-        PUBLIC 
+        VulkanCPP PUBLIC
+        -static-libgcc
+        -static-libstdc++
         glfw
         ${Vulkan_LIBRARIES}
         OpenGL::GL

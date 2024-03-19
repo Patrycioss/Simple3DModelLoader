@@ -10,8 +10,17 @@ Material::Material(const ShaderProgram& shaderProgram, const Texture& texture, c
 	glUniform4fv(shaderProgram.GetUniformLocation("color"), 1, &this->color.r);
 }
 
+Material::Material()
+{
+}
+
 void Material::Apply() const
 {
 	shaderProgram.Use();
 	texture.Bind();
+}
+
+const ShaderProgram& Material::Shader() const
+{
+	return shaderProgram;
 }

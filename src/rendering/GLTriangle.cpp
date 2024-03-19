@@ -1,16 +1,14 @@
-﻿#include "Triangle.hpp"
+﻿#include "GLTriangle.hpp"
 
 #include <glad/gl.h>
 
-#include "../data/Vec2.hpp"
-
-Shapes::Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, const Vec2<float> top)
+GLShapes::GLTriangle::GLTriangle(const glm::vec2 left, const glm::vec2 right, const glm::vec2 top)
 {
 	const float triangle[] = {
 		// Positions			//Texture coords
-		 left.X,  left.Y, 0.0f, 0.0f, 0.0f, 
-		  top.X,   top.Y, 0.0f, 0.5f, 1.0f,
-		right.X, right.Y, 0.0f, 1.0f, 0.0f,
+		 left.x,  left.y, 0.0f, 0.0f, 0.0f, 
+		  top.x,   top.y, 0.0f, 0.5f, 1.0f,
+		right.x, right.y, 0.0f, 1.0f, 0.0f,
 	};
 
 	glGenVertexArrays(1, &VAO);
@@ -31,13 +29,13 @@ Shapes::Triangle::Triangle(const Vec2<float> left, const Vec2<float> right, cons
 	glBindVertexArray(0);
 }
 
-void Shapes::Triangle::Draw() const
+void GLShapes::GLTriangle::Draw() const
 {
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-Shapes::Triangle::~Triangle()
+GLShapes::GLTriangle::~GLTriangle()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);

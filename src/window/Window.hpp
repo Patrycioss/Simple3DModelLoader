@@ -1,17 +1,38 @@
 ﻿#pragma once
 
-#include "../data/Vec2.hpp"
+#include <glm/vec2.hpp>
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 class Window
 {
-protected:
-	Vec2<int> size;
-	
 public:
-	virtual void Preframe() = 0;
-	virtual void Postframe() = 0;
-	virtual void Destroy() = 0;
-	virtual bool ShouldClose() = 0;
+	enum class CursorMode
+	{
+		Normal,
+		Captured,
+		Hidden,
+		Disabled
+	};
+	
+private:
+	GLFWwindow* window = nullptr;
+	const char* windowTitle = nullptr;
 
-	Vec2<int> Size();
+	glm::vec2 size;
+	mutable glm::dvec2 mousePos;
+	
+	bool InternalGetKey(int glfwKey) const;
+	void MouseCallbacK(GLFWwindow* window, double xpos, double ypos) const;
+
+public:
+	const glm::dvec2& MousePos() const;
+	explicit Window(glm::vec2 size, const char* windowTitle);
+	void Postframe() const;
+	bool ShouldClose() const;
+	bool GetKey(int glfwKey, int glfwKeyState = GLFW_PRESS) const;
+	glm::vec2 Size() const;
+	void Close() const;
+	void SetMouseFocus(CursorMode cursorMode) const;
+	~Window();
 };
