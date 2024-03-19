@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 23)
 find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
 
-
 add_executable(VulkanCPP src/main.cpp
         glad/src/gl.c
         glad/src/vulkan.c
@@ -36,6 +35,7 @@ target_include_directories(
         glm
         ${Vulkan_INCLUDE_DIRS}
         glad/include
+        libs/assimp/include
 )
 
 set(CMAKE_EXE_LINKER_FLAGS " -static")
@@ -47,5 +47,6 @@ target_link_libraries(
         glfw
         ${Vulkan_LIBRARIES}
         OpenGL::GL
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp/libs/assimp-vc143-mtd.lib
 )
 

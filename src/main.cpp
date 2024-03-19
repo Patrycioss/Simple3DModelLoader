@@ -1,6 +1,5 @@
 ﻿
 #include <cmath>
-#include <functional>
 
 #include "Material.hpp"
 #include "rendering/ShaderProgram.hpp"
@@ -13,6 +12,11 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "Camera.hpp"
 
