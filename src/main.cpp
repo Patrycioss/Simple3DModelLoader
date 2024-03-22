@@ -1,7 +1,7 @@
 ﻿
 #include <cmath>
 
-#include "Material.hpp"
+#include "rendering/structures/Material.hpp"
 #include "rendering/ShaderProgram.hpp"
 #include "window/window.hpp"
 #include <glad/gl.h>
@@ -14,12 +14,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "Camera.hpp"
-
+#include "asyncoperations/LoadOBJModelOperation.hpp"
 
 int main()
 {
@@ -38,6 +35,9 @@ int main()
 		{0.9f, -0.5f},
 		{0.45f, 0.5f}
 	};
+
+	const OBJModel model = LoadOBJModelOperation("resources/models/backpack.obj").AwaitResult();
+	model.Test();
 	
 	const GLShapes::GLRectangle rectangle{};
 
