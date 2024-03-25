@@ -539,3 +539,5 @@ fabric.properties
 **/.obsidian/
 
 
+/.cache/jb/UpdateWork.dat
+/.cache/jb/version.txt

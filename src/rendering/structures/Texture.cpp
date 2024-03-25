@@ -50,3 +50,8 @@ void Texture::Bind() const
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureHandle);
 }
+
+const unsigned int& Texture::GetID() const
+{
+	return textureHandle;
+}

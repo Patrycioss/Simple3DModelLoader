@@ -1,0 +1,65 @@
+LoadFastObjMeshOperation loadFastObjMeshOperation("resources/models/cube.obj");
+	fastObjMesh* mesh = loadFastObjMeshOperation.AwaitResult();
+	
+	struct Face
+	{
+		glm::vec3 position;
+		glm::vec2 texCoords;
+		glm::vec3 normals;
+	};
+	
+	std::vector<Face> faces{};
+	
+	std::vector<glm::vec3> vertices{};
+	std::vector<glm::vec2> uvs{};
+	std::vector<glm::vec3> normals{};
+	
+	for (unsigned int groupIndex = 0; groupIndex < mesh->group_count; groupIndex++)
+	{
+		const fastObjGroup& group = mesh->groups[groupIndex];
+	
+		if (group.name)
+		{
+			printf("----- Working on group %s ----- \n", group.name);
+		}
+	
+		int indexIndex;
+		
+		for (unsigned int faceVerticesIndex = 0; faceVerticesIndex < group.face_count; faceVerticesIndex++)
+		{
+			const unsigned int faceVertices = mesh->face_vertices[group.face_offset + faceVerticesIndex];
+	
+			for (unsigned int faceIndex = 0; faceIndex < faceVertices; faceIndex++)
+			{
+				printf("Face %d: \n", faceIndex);
+
+				int ask =  indexIndex + group.index_offset + 1;
+				fastObjIndex meshIndex = mesh->indices[group.index_offset + indexIndex];
+	
+				glm::vec3 position = {mesh->positions[3 * meshIndex.p + 0], mesh->positions[3 * meshIndex.p + 1], mesh->positions[3 * meshIndex.p + 2]};
+	
+				printf("Position:");
+				PrintVec3(position);
+				
+				glm::vec2 texCoords = {mesh->texcoords[2 * meshIndex.t + 0], mesh->texcoords[2 * meshIndex.t + 1]};
+	
+				printf("TexCoords:");
+				PrintVec2(texCoords);
+				
+				glm::vec3 normal = {mesh->normals[3 * meshIndex.n + 0], mesh->normals[3 * meshIndex.n + 1], mesh->normals[3 * meshIndex.n + 2]};
+	
+				printf("Normals:");
+				PrintVec3(normal);
+	
+				faces.push_back({position, texCoords, normal});
+				vertices.push_back(position);
+				uvs.push_back(texCoords);
+				normals.push_back(normal);
+				
+				indexIndex++;
+			}
+		}
+		
+	}
+
+	fast_obj_destroy(mesh);

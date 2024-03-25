@@ -4,3 +4,9 @@
 [submodule "libs/glfw"]
 	path = libs/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "libs/dds_image"]
+	path = libs/dds_image
+	url = https://github.com/spnda/dds_image.git
+[submodule "libs/rapidobj"]
+	path = libs/rapidobj
+	url = https://github.com/guybrush77/rapidobj

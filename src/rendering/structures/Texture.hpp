@@ -33,4 +33,5 @@ public:
 	void SetWrappingMethod(WrappingMethod wrappingMethod) const;
 	void SetFilteringMethod(FilteringMethod filteringMethod) const;
 	void Bind() const;
+	const unsigned int& GetID() const;
 };
