@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 23)
 find_package(Vulkan REQUIRED)
 find_package(OpenGL REQUIRED)
 
-
 add_executable(VulkanCPP src/main.cpp
         glad/src/gl.c
         glad/src/vulkan.c
@@ -23,11 +22,10 @@ add_executable(VulkanCPP src/main.cpp
         src/Camera.cpp
 )
 
-
 file(COPY resources
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_subdirectory(glfw)
+add_subdirectory(libs/glfw)
 
 target_include_directories(
         VulkanCPP 
@@ -48,4 +46,3 @@ target_link_libraries(
         ${Vulkan_LIBRARIES}
         OpenGL::GL
 )
-
