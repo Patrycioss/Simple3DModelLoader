@@ -2,22 +2,15 @@
 #include <vector>
 
 #include "Vertex.hpp"
-#include "Texture.hpp"
-#include "../ShaderProgram.hpp"
-
 
 class Mesh 
 {
 private:
-	unsigned int VAO, VBO, EBO;
-
-	void Setup();
-	
-public:
+	unsigned int VAO, VBO;
 	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
 
-	explicit Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-	void Draw(ShaderProgram& shaderProgram);
+public:
+	const std::vector<Vertex>& GetVertices();
+	explicit Mesh(const std::vector<Vertex>& vertices);
+	void Draw() const;
 };

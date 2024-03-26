@@ -22,6 +22,7 @@ add_executable(VulkanCPP src/main.cpp
         src/rendering/structures/Mesh.cpp
         src/obj-loading/LoadFastObjMeshOperation.cpp
         src/obj-loading/LoadFastObjMeshOperation.hpp
+        src/FakeObjects.hpp
 )
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
