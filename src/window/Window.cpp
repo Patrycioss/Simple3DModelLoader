@@ -53,7 +53,7 @@ Window::Window(const glm::vec2 size, const char* windowTitle)
 
 	printf("Set up Window!\n");
 
-	window = glfwCreateWindow(mode->width, mode->height, "My Title", monitor, nullptr);
+	window = glfwCreateWindow(mode->width, mode->height, "My Title", nullptr, nullptr);
 	
 	if (window == nullptr)
 	{

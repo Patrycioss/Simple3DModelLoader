@@ -112,9 +112,65 @@ int main()
 		NEAR_CLIPPING_PLANE,
 		FAR_CLIPPING_PLANE
 	);
-	
-	Window window{{1980,1200}, "GLFW Window"};
 
+	float deltaTime = 0.0f;	// Time between current frame and last frame
+	float lastFrame = 0.0f; // Time of last frame
+	
+	rapidobj::Result result = rapidobj::ParseFile("resources/models/backpack.obj");
+	
+	if (result.error)
+	{
+		std::cout << "Error loading result!!!: " << result.error.code.message() << '\n';
+	}
+
+	std::vector<unsigned int> resultIndices{};
+	std::vector<Vertex> resultVertices{};
+
+	printf("Shapecount: %llu \n", result.shapes.size());
+	
+	for (const rapidobj::Shape& shape: result.shapes)
+	{
+		for (int i = 0; i < result.attributes.positions.size()/3; i++)
+		{
+			Vertex vertex{};
+
+			int posIndex = i * 3;
+			if (result.attributes.positions.size() > posIndex + 2)
+			{
+				vertex.Position = {result.attributes.positions[posIndex], result.attributes.positions[posIndex + 1], result.attributes.positions[posIndex + 2]};
+			}
+			
+			int uvIndex = i * 2;
+			if (result.attributes.texcoords.size() > uvIndex + 1)
+			{
+				vertex.UV = {result.attributes.texcoords[uvIndex], result.attributes.texcoords[uvIndex + 1]};
+			}
+
+			int normalIndex = i * 3;
+			if (result.attributes.normals.size() > normalIndex + 2)
+			{
+				vertex.Normal = {result.attributes.normals[normalIndex], result.attributes.normals[normalIndex + 1], result.attributes.normals[normalIndex + 2]};
+			}
+			
+			int colorIndex = i * 3;
+			if (result.attributes.colors.size() > colorIndex + 2)
+			{
+				vertex.Color = {result.attributes.colors[colorIndex], result.attributes.colors[colorIndex + 1], result.attributes.colors[colorIndex + 2]};
+			}
+
+			resultVertices.push_back(vertex);
+		}
+		
+		for (const rapidobj::Index& index: shape.mesh.indices)
+		{
+			resultIndices.push_back(index.position_index);
+		}
+	}
+
+	// ------- OpenGL Settings / Window Creation / Camera ----------- //
+	Window window{{1980,1200}, "GLFW Window"};
+	window.SetMouseFocus(Window::CursorMode::Hidden);
+	
 	glEnable(GL_DEPTH_TEST);
 
 	// Accept fragment if it is closer to the camera than the former one
@@ -122,26 +178,22 @@ int main()
 	
 	// Cull triangles which normal is not towards the camera
 	// ENABLE THIS WHEN PROPER OBJ LOADING UNTIL THEN IGNORE :D
-	// glEnable(GL_CULL_FACE);
-
-	const ShaderProgram basicModelProgram("resources/shaders/vertexModel.glsl",
-									 "resources/shaders/fragmentModel.glsl");
-
-	const Texture texture("resources/textures/awesomeface.png");
-	const Material material(basicModelProgram, texture);
-
+	glEnable(GL_CULL_FACE);
 	
-	float deltaTime = 0.0f;	// Time between current frame and last frame
-	float lastFrame = 0.0f; // Time of last frame
-
+	
+	
 	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 	glm::vec2 lastPos = window.Size() / 2.0f;
 	bool firstMouse = true;
-
-	window.SetMouseFocus(Window::CursorMode::Hidden);
-
-	Mesh mesh = Mesh(FakeObjects::cube);
+	
+	Mesh cubeMesh = Mesh(resultVertices, resultIndices);
 	GLShapes::GLCube cube = GLShapes::GLCube();
+
+	const ShaderProgram basicModelProgram("resources/shaders/vertexModel.glsl","resources/shaders/fragmentModel.glsl");
+	const Texture texture("resources/textures/awesomeface.png");
+	const Material material(basicModelProgram, texture);
+	
+	// -------------------------------------------------------------- //
 
 	while (!window.ShouldClose())
 	{
@@ -158,15 +210,16 @@ int main()
 		
 		glUniformMatrix4fv(basicModelProgram.GetUniformLocation("MVP"), 1, GL_FALSE, &mvp[0][0]);
 
-		basicModelProgram.Use();
-		mesh.Draw();
-		// cube.Draw();
-
 		GLenum err;
 		while((err = glGetError()) != GL_NO_ERROR)
 		{
 			printf("Error!!!!: %u", err);
 		}
+		
+		basicModelProgram.Use();
+		cubeMesh.Draw();
+		// cube.Draw();
+		
 		
 		window.Postframe();
 	}
