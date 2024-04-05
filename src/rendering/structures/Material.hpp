@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <unordered_map>
 #include <glm/glm.hpp>
 
 #include "Texture.hpp"
@@ -9,15 +10,11 @@ class Material
 {
 private:
 	ShaderProgram shaderProgram;
-	Texture texture{};
-	glm::vec4 color{};
+	Texture texture;
 
 public:
-	Material(const ShaderProgram& shaderProgram,
-		const Texture& texture
-		, glm::vec4 color = {1,1,1,1});
+	explicit Material(Texture& texture);
 
-	Material();
-	void Apply() const;
-	const ShaderProgram& Shader() const;
+	void Apply(const glm::mat4& mvp) const;
+	~Material();
 };

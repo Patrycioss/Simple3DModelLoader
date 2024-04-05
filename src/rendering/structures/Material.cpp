@@ -1,28 +1,28 @@
 ﻿#include "Material.hpp"
 
-#include <utility>
+#include <glad/gl.h>
 
 class ShaderProgram;
 
-Material::Material(const ShaderProgram& shaderProgram, const Texture& texture, const glm::vec4 color)
-		: shaderProgram(shaderProgram), texture(texture), color(color)
-{
-	shaderProgram.Use();
-	glUniform1i(shaderProgram.GetUniformLocation("texture0"), 0);
-	glUniform4fv(shaderProgram.GetUniformLocation("color"), 1, &this->color.r);
-}
-
-Material::Material()
+Material::Material(Texture& texture)
+		: shaderProgram("resources/shaders/vertexModel.glsl", "resources/shaders/fragmentModel.glsl"), texture(texture)
 {
 }
 
-void Material::Apply() const
+void Material::Apply(const glm::mat4& mvp) const
 {
 	shaderProgram.Use();
+
+	const unsigned int mvpLocation = shaderProgram.GetUniformLocation("MVP");
+
+	glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+	
+	glActiveTexture(GL_TEXTURE0);
 	texture.Bind();
 }
 
-const ShaderProgram& Material::Shader() const
+Material::~Material()
 {
-	return shaderProgram;
+	texture.Cleanup();	
+
 }

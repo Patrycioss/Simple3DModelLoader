@@ -1,64 +1,64 @@
 ﻿#include "Mesh.hpp"
 
-#include <cstdio>
 #include <glad/gl.h>
 
-const std::vector<Vertex>& Mesh::GetVertices()
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<ModelTexture>& textures)
+	: vertices(vertices), indices(indices), textures(textures)
 {
-	return vertices;
+	SetupMesh();
 }
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& vertexIndices)
-	: vertices(vertices), vertexIndices(vertexIndices)
+void Mesh::Draw(const ShaderProgram& shaderProgram) const
+{
+	shaderProgram.Use();
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(shaderProgram.GetUniformLocation("diffuse"), 0);
+	glBindTexture(GL_TEXTURE_2D, textures[0].ID);
+
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+
+	glBindVertexArray(0);
+	glActiveTexture(GL_TEXTURE0);
+}
+
+void Mesh::SetupMesh()
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
-	
+
 	glBindVertexArray(VAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-	const unsigned int sizy = sizeof(GL_UNSIGNED_INT) * vertexIndices.size();
-	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GL_UNSIGNED_INT) * vertexIndices.size(), vertexIndices.data(), GL_STATIC_DRAW);
-
-	constexpr unsigned int stride = 11 * sizeof(float);
-	
-	// Position Attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, 0);
+	// Positions
 	glEnableVertexAttribArray(0);
-
-	// Texture Coords Attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	// Normal Attribute
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(5 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	
-	// Color Attribute
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(8 * sizeof(float)));
-	glEnableVertexAttribArray(3);
+	// UV
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
+	
+	
+//	// IDs
+//	glEnableVertexAttribArray(5);
+//	glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, m_BoneIDs));
+//
+//	// weights
+//	glEnableVertexAttribArray(6);
+//	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, m_Weights));
+//	glBindVertexArray(0);
 
-	glBindVertexArray(0);
-
-	// Do after unbinding VAO otherwise it's not linked to VAO
-	glBindBuffer(GL_ARRAY_BUFFER,0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-
-	GLenum err;
-	while((err = glGetError()) != GL_NO_ERROR)
-	{
-		printf("Error!!!!: %u", err);
-	}
 }
 
-void Mesh::Draw() const
+void Mesh::CleanBuffers() const
 {
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, vertexIndices.size(), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+//	glDeleteBuffers(vertices.size() * sizeof(Vertex), &VBO);
+//	glDeleteBuffers(indices.size() * sizeof(unsigned int), &EBO);
+//	glDeleteVertexArrays(1, &VAO);
 }

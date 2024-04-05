@@ -20,13 +20,16 @@ add_executable(VulkanCPP src/main.cpp
         src/window/Window.cpp
         src/Camera.cpp
         src/rendering/structures/Mesh.cpp
-        src/obj-loading/LoadFastObjMeshOperation.cpp
-        src/obj-loading/LoadFastObjMeshOperation.hpp
         src/FakeObjects.hpp
         src/rendering/structures/Index.hpp
+        src/rendering/structures/NewMaterial.cpp
+        src/rendering/structures/NewMaterial.hpp
+        src/rendering/structures/Model.cpp
+        src/rendering/structures/Model.hpp
 )
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dlls/libassimp-5.dll ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 add_subdirectory(libs/glfw)
 add_subdirectory(libs/glm)
@@ -41,17 +44,26 @@ target_include_directories(
         ${Vulkan_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/glad/include
         ${RAPIDOBJ_INCLUDE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp/include
 )
 
-#set(CMAKE_EXE_LINKER_FLAGS " -static")
+
+add_library(zlib STATIC IMPORTED)
+SET_TARGET_PROPERTIES(zlib PROPERTIES LINKER_LANGUAGE C)
+SET_TARGET_PROPERTIES(zlib PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/libzlibstatic.a)
+
+set(CMAKE_EXE_LINKER_FLAGS " -static")
 
 target_link_libraries(
         VulkanCPP PUBLIC
-#        -static-libgcc
-#        -static-libstdc++
+        -static-libgcc
+        -static-libstdc++
         glfw
         ${Vulkan_LIBRARIES}
         OpenGL::GL
         dds_image
-        rapidobj
+#        rapidobj
+        zlib
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp/libassimp.dll.a
 )

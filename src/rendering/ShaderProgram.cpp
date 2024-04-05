@@ -41,17 +41,37 @@ void DebugShaderProgram(const unsigned int program)
 	}
 }
 
-unsigned int& ShaderProgram::GetID()
+void printProgramInfoLog(GLuint obj)
+{
+	int infologLength = 0;
+	int charsWritten  = 0;
+	char *infoLog;
+ 
+	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
+ 
+	if (infologLength > 0)
+	{
+		infoLog = (char *)malloc(infologLength);
+		glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
+		printf("%s\n",infoLog);
+		free(infoLog);
+	}
+}
+
+const unsigned int& ShaderProgram::GetID() const
 {
 	return ID;
 }
 
-[[nodiscard]] unsigned int ShaderProgram::GetUniformLocation(const char* uniform) const
+[[nodiscard]] int ShaderProgram::GetUniformLocation(const char* uniform) const
 {
 	const int location = glGetUniformLocation(ID, uniform);
 
 	if (location == -1)
 	{
+		printProgramInfoLog(ID);
+		printf("%s \n", glIsProgram(ID)? "YES" : "NO");
+
 		throw ShaderProgramException("Failed to get location of uniform with name: '" + std::string(uniform) + "'\n");
 	}
 
@@ -66,8 +86,8 @@ void ShaderProgram::Use() const
 
 ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	ReadOperation readVertexOperation{vertexPath};
-	ReadOperation readFragmentOperation{fragmentPath};
+	ReadOperation readVertexOperation{std::move(vertexPath)};
+	ReadOperation readFragmentOperation{std::move(fragmentPath)};
 
 	const std::string vertexShaderSource = readVertexOperation.AwaitResult();
 	printf("Loaded vertex shader source:\n %s\n", vertexShaderSource.c_str());
@@ -94,14 +114,11 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 	glAttachShader(ID, vertexShader);
 	glAttachShader(ID, fragmentShader);
 	glLinkProgram(ID);
+
+	DebugShaderProgram(ID);
 		
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-}
-
-ShaderProgram::ShaderProgram()
-{
-	
 }
 
 [[nodiscard]] std::string ShaderProgram::MakeShaderPath(const char* shaderName)
@@ -114,5 +131,6 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::~ShaderProgram()
 {
+	printf("Deleting shader program \n");
 	glDeleteProgram(ID);
 }

@@ -1,5 +1,4 @@
-﻿
-#include <cmath>
+﻿#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -9,22 +8,21 @@
 #include <glad/gl.h>
 #include "GLFW/glfw3.h"
 #include "rendering/GLCube.hpp"
-#include "rendering/GLRectangle.hpp"
-#include "rendering/GLTriangle.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <vulkan/vulkan.h>
-
-#include <rapidobj/rapidobj.hpp>
 #include <dds.hpp>
 
 
 #include "Camera.hpp"
-#include "FakeObjects.hpp"
-#include "obj-loading/LoadFastObjMeshOperation.hpp"
-#include "rendering/structures/Mesh.hpp"
+#include "rendering/structures/NewMaterial.hpp"
+#include "rendering/structures/Model.hpp"
+
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 void CheckShouldCloseWindow(const Window& window)
 {
@@ -48,8 +46,7 @@ void LookAround(const Window& window, const float& deltaTime, Camera& camera, gl
 	lastPos = mousePos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset);
-		
-		
+
 
 	if (window.GetKey(GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -74,20 +71,21 @@ void ClearScreen()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void DrawCubes(const GLShapes::GLCube& cube, const Material& basic3Dmaterial, const glm::vec3 cubePositions[10])
-{
-	for(unsigned int i = 0; i < 10; i++)
-	{
-		glm::mat4 model2 = glm::mat4(1.0f);
-		model2 = translate(model2, cubePositions[i]);
-		float angle = 20.0f * i; 
-		model2 = rotate(model2, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		const unsigned int modelLoc = basic3Dmaterial.Shader().GetUniformLocation("model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
-		
-		cube.Draw();
-	}
-}
+// void DrawCubes(const GLShapes::GLCube& cube, const Material& basic3Dmaterial, const glm::vec3 cubePositions[10])
+// {
+// 	for (unsigned int i = 0; i < 10; i++)
+// 	{
+// 		glm::mat4 model2 = glm::mat4(1.0f);
+// 		model2 = translate(model2, cubePositions[i]);
+// 		const float angle = 20.0f * i;
+// 		model2 = rotate(model2, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+//
+// 		const unsigned int modelLoc = basic3Dmaterial.Shader().GetUniformLocation("model");
+// 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, value_ptr(model2));
+//
+// 		cube.Draw();
+// 	}
+// }
 
 void PrintVec2(const glm::vec2& v)
 {
@@ -96,13 +94,13 @@ void PrintVec2(const glm::vec2& v)
 
 void PrintVec3(const glm::vec3& v)
 {
-	printf("{%f,%f,%f}\n", v.x, v.y,v.z);
+	printf("{%f,%f,%f}\n", v.x, v.y, v.z);
 }
 
 int main()
 {
-	constexpr float VERTICAL_FOV = glm::radians(45.0f); 
-	constexpr float ASPECT_RATIO = 4.0f/3.0f;
+	constexpr float VERTICAL_FOV = glm::radians(45.0f);
+	constexpr float ASPECT_RATIO = 4.0f / 3.0f;
 	constexpr float NEAR_CLIPPING_PLANE = 0.1f;
 	constexpr float FAR_CLIPPING_PLANE = 100.0f;
 
@@ -113,118 +111,61 @@ int main()
 		FAR_CLIPPING_PLANE
 	);
 
-	float deltaTime = 0.0f;	// Time between current frame and last frame
+	float deltaTime = 0.0f; // Time between current frame and last frame
 	float lastFrame = 0.0f; // Time of last frame
 	
-	rapidobj::Result result = rapidobj::ParseFile("resources/models/backpack.obj");
-	
-	if (result.error)
-	{
-		std::cout << "Error loading result!!!: " << result.error.code.message() << '\n';
-	}
-
-	std::vector<unsigned int> resultIndices{};
-	std::vector<Vertex> resultVertices{};
-
-	printf("Shapecount: %llu \n", result.shapes.size());
-	
-	for (const rapidobj::Shape& shape: result.shapes)
-	{
-		for (int i = 0; i < result.attributes.positions.size()/3; i++)
-		{
-			Vertex vertex{};
-
-			int posIndex = i * 3;
-			if (result.attributes.positions.size() > posIndex + 2)
-			{
-				vertex.Position = {result.attributes.positions[posIndex], result.attributes.positions[posIndex + 1], result.attributes.positions[posIndex + 2]};
-			}
-			
-			int uvIndex = i * 2;
-			if (result.attributes.texcoords.size() > uvIndex + 1)
-			{
-				vertex.UV = {result.attributes.texcoords[uvIndex], result.attributes.texcoords[uvIndex + 1]};
-			}
-
-			int normalIndex = i * 3;
-			if (result.attributes.normals.size() > normalIndex + 2)
-			{
-				vertex.Normal = {result.attributes.normals[normalIndex], result.attributes.normals[normalIndex + 1], result.attributes.normals[normalIndex + 2]};
-			}
-			
-			int colorIndex = i * 3;
-			if (result.attributes.colors.size() > colorIndex + 2)
-			{
-				vertex.Color = {result.attributes.colors[colorIndex], result.attributes.colors[colorIndex + 1], result.attributes.colors[colorIndex + 2]};
-			}
-
-			resultVertices.push_back(vertex);
-		}
-		
-		for (const rapidobj::Index& index: shape.mesh.indices)
-		{
-			resultIndices.push_back(index.position_index);
-		}
-	}
-
 	// ------- OpenGL Settings / Window Creation / Camera ----------- //
-	Window window{{1980,1200}, "GLFW Window"};
-	window.SetMouseFocus(Window::CursorMode::Hidden);
-	
+	Window window{{1980, 1200}, "GLFW Window"};
+	window.SetMouseFocus(Window::CursorMode::Normal);
+
 	glEnable(GL_DEPTH_TEST);
 
 	// Accept fragment if it is closer to the camera than the former one
 	glDepthFunc(GL_LESS);
-	
+
 	// Cull triangles which normal is not towards the camera
 	// ENABLE THIS WHEN PROPER OBJ LOADING UNTIL THEN IGNORE :D
 	glEnable(GL_CULL_FACE);
-	
-	
-	
+
 	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 	glm::vec2 lastPos = window.Size() / 2.0f;
 	bool firstMouse = true;
-	
-	Mesh cubeMesh = Mesh(resultVertices, resultIndices);
-	GLShapes::GLCube cube = GLShapes::GLCube();
 
-	const ShaderProgram basicModelProgram("resources/shaders/vertexModel.glsl","resources/shaders/fragmentModel.glsl");
-	const Texture texture("resources/textures/awesomeface.png");
-	const Material material(basicModelProgram, texture);
-	
+	// Mesh cubeMesh = Mesh(resultVertices, resultIndices);
+	// GLShapes::GLCube cube = GLShapes::GLCube();
+
+	 const ShaderProgram shaderProgram("resources/shaders/vertexModel.glsl", "resources/shaders/fragmentModel.glsl");
+	// const Texture texture("resources/textures/awesomeface.png");
+	// const Material material(basicModelProgram, texture);
+
 	// -------------------------------------------------------------- //
 
+	
+//	ModelLoader::ModelInformation* backpack = ModelLoader::LoadModel("resources/models/wall_window/wall_window.obj");
+	Model* backpack = new Model("resources/models/backpack/backpack.obj");
+//	ModelLoader::ModelInformation* backpack = ModelLoader::LoadModel("resources/models/cube/cube.obj");
+	
 	while (!window.ShouldClose())
 	{
-		CheckShouldCloseWindow(window);	
+		CheckShouldCloseWindow(window);
 		LookAround(window, deltaTime, camera, lastPos, firstMouse);
 		CalcDeltaTime(deltaTime, lastFrame);
 
 		ClearScreen();
-	
 
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 		glm::mat4 modelMatrix = glm::mat4(1.0);
 		glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
-		
-		glUniformMatrix4fv(basicModelProgram.GetUniformLocation("MVP"), 1, GL_FALSE, &mvp[0][0]);
 
-		GLenum err;
-		while((err = glGetError()) != GL_NO_ERROR)
-		{
-			printf("Error!!!!: %u", err);
-		}
-		
-		basicModelProgram.Use();
-		cubeMesh.Draw();
-		// cube.Draw();
-		
-		
+		shaderProgram.Use();
+		const unsigned int mvpLocation = shaderProgram.GetUniformLocation("MVP");
+
+		glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+		backpack->Draw(shaderProgram,mvp);
+
 		window.Postframe();
 	}
 
-	// glDeleteTextures(1, &textureID);
-
+	delete backpack;
 	return 0;
 }

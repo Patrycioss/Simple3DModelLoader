@@ -1,7 +1,5 @@
 ﻿#include "ReadImageOperation.hpp"
 
-#include <utility>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../libs/stb/stb_image.h"
 
@@ -12,9 +10,9 @@ void ReadImageOperation::ReadFile()
 }
 
 ReadImageOperation::ReadImageOperation(std::string filePath, const bool flipVertically)
-	: flipVertical(flipVertically), filePath(std::move(filePath))
+	: flipVertical(flipVertically), filePath(filePath)
 {
-	thread = std::thread(&ReadFile, this);
+	thread = std::thread(&ReadImageOperation::ReadFile, this);
 }
 
 ReadImageOperation::ImageInfo ReadImageOperation::AwaitResult()

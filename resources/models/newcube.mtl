@@ -1,0 +1,44 @@
+﻿newmtl CubeTop
+Kd 1 1 1
+Ns 96.0784
+d 1
+illum 1
+Ka 0 0 0
+Ks 1 1 1
+map_Kd awesomeface.png
+
+newmtl CubeFront
+Kd 1 1 1
+Ns 96.0784
+d 1
+illum 1
+Ka 0 0 0
+Ks 1 1 1
+map_Kd awesomeface.png
+
+newmtl CubeBack
+Kd 1 1 1
+Ns 96.0784
+d 1
+illum 1
+Ka 0 0 0
+Ks 1 1 1
+map_Kd awesomeface.png
+
+newmtl CubeLeft
+Kd 1 1 1
+Ns 96.0784
+d 1
+illum 1
+Ka 0 0 0
+Ks 1 1 1
+map_Kd awesomeface.png
+
+newmtl CubeRight
+Kd 1 1 1
+Ns 93.0784
+d 1
+illum 1
+Ka 0 0 0
+Ks 1 1 1
+map_Kd awesomeface.png
