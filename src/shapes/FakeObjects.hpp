@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <vector>
 
-#include "rendering/structures/Vertex.hpp"
+#include "../rendering/structures/Vertex.hpp"
 
 
 struct FakeObjects

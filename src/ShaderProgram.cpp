@@ -1,9 +1,8 @@
 ﻿#include "ShaderProgram.hpp"
 
-#include <glad/gl.h>
-#include <utility>
-
-#include "../asyncoperations/ReadOperation.hpp"
+#include "glad/gl.h"
+#include <stdexcept>
+#include "IO.hpp"
 
 constexpr const char* SHADER_FOLDER_PATH = "resources/shaders/";
 constexpr const char* SHADER_EXTENSION = ".glsl";
@@ -86,13 +85,10 @@ void ShaderProgram::Use() const
 
 ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	ReadOperation readVertexOperation{std::move(vertexPath)};
-	ReadOperation readFragmentOperation{std::move(fragmentPath)};
-
-	const std::string vertexShaderSource = readVertexOperation.AwaitResult();
+	const std::string vertexShaderSource = IO::ReadTextFile(vertexPath);
 	printf("Loaded vertex shader source:\n %s\n", vertexShaderSource.c_str());
 
-	const std::string fragmentShaderSource = readFragmentOperation.AwaitResult();
+	const std::string fragmentShaderSource = IO::ReadTextFile(fragmentPath);
 	printf("Loaded fragment shader source:\n %s\n", fragmentShaderSource.c_str());
 
 	const char* vertSSource = vertexShaderSource.c_str();

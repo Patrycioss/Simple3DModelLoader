@@ -8,6 +8,18 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch): Front(
 	Yaw = yaw;
 	Pitch = pitch;
 	UpdateCameraVectors();
+
+	constexpr float VERTICAL_FOV = glm::radians(45.0f);
+	constexpr float ASPECT_RATIO = 4.0f / 3.0f;
+	constexpr float NEAR_CLIPPING_PLANE = 0.1f;
+	constexpr float FAR_CLIPPING_PLANE = 100.0f;
+
+	projectionMatrix = glm::perspective(
+			VERTICAL_FOV,
+			ASPECT_RATIO,
+			NEAR_CLIPPING_PLANE,
+			FAR_CLIPPING_PLANE
+	);
 }
 
 glm::mat4 Camera::GetViewMatrix() const
@@ -70,4 +82,9 @@ void Camera::UpdateCameraVectors()
 	Right = glm::normalize(glm::cross(Front, WorldUp));
 	// normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	Up = glm::normalize(glm::cross(Right, Front));
+}
+
+glm::mat4 Camera::GetProjectionMatrix() const
+{
+	return projectionMatrix;
 }

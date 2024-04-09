@@ -1,6 +1,6 @@
 ﻿#include "GLRectangle.hpp"
 
-#include <glad/gl.h>
+#include "glad/gl.h"
 
 GLShapes::GLRectangle::GLRectangle()
 {

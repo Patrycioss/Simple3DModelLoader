@@ -1,7 +1,7 @@
 ﻿
 #include "GLCube.hpp"
 
-#include <glad/gl.h>
+#include "glad/gl.h"
 
 namespace GLShapes {
 	GLCube::GLCube()

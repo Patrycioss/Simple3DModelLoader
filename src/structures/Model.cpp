@@ -1,9 +1,10 @@
 ﻿#include "Model.hpp"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
+#include "../ResourceRepo.hpp"
 
-Model::Model(const std::string& path, bool gamma)
-	: gammaCorrection(false)
+Model::Model(const std::string& path)
+	: shaderProgram(ResourceRepo::VertexShader(), ResourceRepo::FragmentShader())
 {
 	LoadModel(path);
 }
@@ -41,7 +42,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<ModelTexture> textures;
+	std::vector<Texture> textures;
 
 	for(unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -81,16 +82,16 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-	std::vector<ModelTexture> diffuseMaps = LoadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+	std::vector<Texture> diffuseMaps = LoadTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
 	// return a mesh object created from the extracted mesh data
 	return Mesh(vertices, indices, textures);
 }
 
-std::vector<ModelTexture> Model::LoadTextures(aiMaterial* material, aiTextureType type, const std::string& typeName)
+std::vector<Texture> Model::LoadTextures(aiMaterial* material, aiTextureType type, const std::string& typeName)
 {
-	std::vector<ModelTexture> textures;
+	std::vector<Texture> textures;
 	for(unsigned int i = 0; i < material->GetTextureCount(type); i++)
 	{
 		aiString str;
@@ -108,7 +109,7 @@ std::vector<ModelTexture> Model::LoadTextures(aiMaterial* material, aiTextureTyp
 		}
 		if(!skip)
 		{   // if texture hasn't been loaded already, load it
-			ModelTexture texture = LoadFromFile(str.C_Str(), this->directory);
+			Texture texture = LoadFromFile(str.C_Str(), this->directory);
 			texture.Type = typeName;
 			texture.Path = str.C_Str();
 			textures.push_back(texture);
@@ -118,8 +119,14 @@ std::vector<ModelTexture> Model::LoadTextures(aiMaterial* material, aiTextureTyp
 	return textures;
 }
 
-void Model::Draw(const ShaderProgram& shaderProgram, const glm::mat4& mvp) const
+void Model::Draw(const glm::mat4& projectionMatrix, const glm::mat4& viewMatrix) const
 {
+	glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
+	
+	shaderProgram.Use();
+	const unsigned int mvpLocation = shaderProgram.GetUniformLocation("MVP");
+	glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+	
 	for (const Mesh& mesh : meshes){
 		mesh.Draw(shaderProgram);
 	}
@@ -127,11 +134,21 @@ void Model::Draw(const ShaderProgram& shaderProgram, const glm::mat4& mvp) const
 
 Model::~Model()
 {
-	for (const ModelTexture& texture : textures_loaded){
+	for (const Texture& texture : textures_loaded){
 		glDeleteTextures(1, &texture.ID);
 	}
 	
 	for (const Mesh& mesh : meshes){
 		mesh.CleanBuffers();
 	}
+}
+
+std::vector<Mesh>& Model::Meshes()
+{
+	return meshes;
+}
+
+ShaderProgram& Model::Shader()
+{
+	return shaderProgram;
 }

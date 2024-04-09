@@ -9,23 +9,26 @@ find_package(OpenGL REQUIRED)
 add_executable(VulkanCPP src/main.cpp
         libs/glad/src/gl.c
         libs/glad/src/vulkan.c
-        src/rendering/ShaderProgram.cpp
-        src/asyncoperations/ReadOperation.cpp
-        src/rendering/GLTriangle.cpp
-        src/rendering/GLRectangle.cpp
-        src/asyncoperations/ReadImageOperation.cpp
-        src/rendering/structures/Material.cpp
-        src/rendering/structures/Texture.cpp
-        src/rendering/GLCube.cpp
+        src/ShaderProgram.cpp
+        src/shapes/GLTriangle.cpp
+        src/shapes/GLRectangle.cpp
+        src/shapes/GLCube.cpp
         src/window/Window.cpp
         src/Camera.cpp
-        src/rendering/structures/Mesh.cpp
-        src/FakeObjects.hpp
-        src/rendering/structures/Index.hpp
-        src/rendering/structures/NewMaterial.cpp
-        src/rendering/structures/NewMaterial.hpp
-        src/rendering/structures/Model.cpp
-        src/rendering/structures/Model.hpp
+        src/structures/Mesh.cpp
+        src/structures/Model.cpp
+        src/Scene.cpp
+        src/IO.cpp
+        src/MeshRenderer.cpp
+        src/GameObject.cpp
+        src/Renderer.cpp
+        src/Component.cpp
+        src/Transform.cpp
+        src/Transform.hpp
+        src/ModelLoader.cpp
+        src/ModelLoader.hpp
+        src/NewMesh.cpp
+        src/NewMesh.hpp
 )
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -46,6 +49,7 @@ target_include_directories(
         ${RAPIDOBJ_INCLUDE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/include
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/assimp/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/stb
 )
 
 

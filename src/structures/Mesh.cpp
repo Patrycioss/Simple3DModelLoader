@@ -1,8 +1,8 @@
 ﻿#include "Mesh.hpp"
 
-#include <glad/gl.h>
+#include "glad/gl.h"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<ModelTexture>& textures)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
 	: vertices(vertices), indices(indices), textures(textures)
 {
 	SetupMesh();
@@ -10,7 +10,6 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>&
 
 void Mesh::Draw(const ShaderProgram& shaderProgram) const
 {
-	shaderProgram.Use();
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(shaderProgram.GetUniformLocation("diffuse"), 0);
 	glBindTexture(GL_TEXTURE_2D, textures[0].ID);
@@ -61,4 +60,14 @@ void Mesh::CleanBuffers() const
 //	glDeleteBuffers(vertices.size() * sizeof(Vertex), &VBO);
 //	glDeleteBuffers(indices.size() * sizeof(unsigned int), &EBO);
 //	glDeleteVertexArrays(1, &VAO);
+}
+
+std::vector<unsigned int>& Mesh::Indices()
+{
+	return indices;
+}
+
+std::vector<Vertex>& Mesh::Vertices()
+{
+	return vertices;
 }

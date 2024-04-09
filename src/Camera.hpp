@@ -20,11 +20,28 @@ constexpr float ZOOM = 45.0f;
 class Camera
 {
 public:
+	struct SpatialInformation{
+		glm::vec3 position;
+		glm::vec3 up;
+		float yaw;
+		float pitch;
+	};
+	
+	struct ProjectionSettings{
+		float verticalFovDeg = 45.0f;
+		float aspectRatio = 4.0f/3.0f;
+		float nearClippingPlane = 0.1f;
+		float farClippingPlane = 100.0f;
+	};
+	
 	glm::vec3 Position;
 	glm::vec3 Front;
 	glm::vec3 Up;
 	glm::vec3 Right;
 	glm::vec3 WorldUp;
+
+
+	glm::mat4 projectionMatrix;
 
 	float Yaw;
 	float Pitch;
@@ -34,11 +51,12 @@ public:
 	float Zoom;
 
 	explicit Camera(
-		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
-	    float yaw = YAW, float pitch = PITCH
+			glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+			float yaw = YAW, float pitch = PITCH
 	);
 
+	glm::mat4 GetProjectionMatrix() const;
 	glm::mat4 GetViewMatrix() const;
 
 	void ProcessKeyboard(const Camera_Movement direction, const float deltaTime);

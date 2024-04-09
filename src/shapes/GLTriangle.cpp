@@ -1,6 +1,6 @@
 ﻿#include "GLTriangle.hpp"
 
-#include <glad/gl.h>
+#include "glad/gl.h"
 
 GLShapes::GLTriangle::GLTriangle(const glm::vec2 left, const glm::vec2 right, const glm::vec2 top)
 {
