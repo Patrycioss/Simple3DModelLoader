@@ -3,10 +3,7 @@
 
 GameObject::~GameObject()
 {
-	if (renderer != nullptr)
-	{
-		delete renderer;
-	}
+	delete renderer;
 
 	for (const auto& item: components)
 	{

@@ -1,10 +1,7 @@
 ﻿#pragma once
 
-
 #include <vector>
 #include "Camera.hpp"
-#include "structures/Model.hpp"
-#include "MeshRenderer.hpp"
 #include "GameObject.hpp"
 
 class Scene

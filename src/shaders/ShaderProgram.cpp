@@ -2,7 +2,7 @@
 
 #include "glad/gl.h"
 #include <stdexcept>
-#include "IO.hpp"
+#include "../IO/IO.hpp"
 
 constexpr const char* SHADER_FOLDER_PATH = "resources/shaders/";
 constexpr const char* SHADER_EXTENSION = ".glsl";
@@ -35,7 +35,7 @@ void DebugShaderProgram(const unsigned int program)
 	{
 		char infoLog[512];
 		glGetProgramInfoLog(program, 512, nullptr, infoLog);
-		printf(infoLog);
+		printf("%s", infoLog);
 		throw ShaderProgramException("Failed to link shader program with info: \n'" + std::string(infoLog) +"'\n");
 	}
 }

@@ -15,7 +15,7 @@ public:
 	};
 
 public:
-	static ImageInfo LoadImage(std::string path, bool flipVertical = true);
+	static ImageInfo LoadImage(const std::string& path, bool flipVertical = true);
 	
-	static std::string ReadTextFile(std::string path);
+	static std::string ReadTextFile(const std::string& path);
 };

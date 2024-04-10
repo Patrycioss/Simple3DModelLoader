@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <glm/fwd.hpp>
-#include "Component.hpp"
-#include "ShaderProgram.hpp"
-#include "ResourceRepo.hpp"
+#include "../scene/Component.hpp"
+#include "../shaders/ShaderProgram.hpp"
+#include "../shaders/ResourceRepo.hpp"
 
 class Renderer : public Component
 {

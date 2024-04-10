@@ -59,7 +59,7 @@ void ProcessMesh(aiMesh* mesh, const aiScene* scene, std::string& directory, std
 		{
 			glm::vec2 vec;
 			// a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
-			// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+			// use models where a vertex can have multiple texture coordinates, so we always take the first set (0).
 			vec.x = mesh->mTextureCoords[0][i].x;
 			vec.y = mesh->mTextureCoords[0][i].y;
 			vertex.UV = vec;
@@ -81,11 +81,11 @@ void ProcessMesh(aiMesh* mesh, const aiScene* scene, std::string& directory, std
 		vertices.push_back(vertex);
 		newIndex = vertices.size() - 1;
 
-		for (int indexIndex = 0; indexIndex < indicesInProcess.size(); indexIndex++)
+		for (unsigned int & index : indicesInProcess)
 		{
-			if (indicesInProcess[indexIndex] == i)
+			if (index == i)
 			{
-				indicesInProcess[indexIndex] = newIndex;
+				index = newIndex;
 			}
 		}
 	}
@@ -113,7 +113,7 @@ void ProcessNode(aiNode* node, const aiScene* scene, std::string& directory, std
 }
 
 
-NewMesh* ModelLoader::LoadModel(std::string path)
+Mesh* ModelLoader::LoadModel(const std::string& path)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path,
@@ -134,5 +134,5 @@ NewMesh* ModelLoader::LoadModel(std::string path)
 	ProcessNode(scene->mRootNode, scene, directory, vertices, indices, textures);
 
 
-	return new NewMesh{vertices, indices, textures};
+	return new Mesh{vertices, indices, textures};
 }

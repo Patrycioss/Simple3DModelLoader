@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Component.hpp"
-#include "Renderer.hpp"
+#include "../renderer/Renderer.hpp"
 #include "Transform.hpp"
 #include "Camera.hpp"
 

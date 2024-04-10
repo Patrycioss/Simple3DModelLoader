@@ -2,10 +2,10 @@
 
 
 #include <vector>
-#include "data/Vertex.hpp"
-#include "structures/Texture.hpp"
+#include "Vertex.hpp"
+#include "../shaders/Texture.hpp"
 
-struct NewMesh
+struct Mesh
 {
 	std::vector<Vertex> Vertices{};
 	std::vector<uint32_t> Indices{};

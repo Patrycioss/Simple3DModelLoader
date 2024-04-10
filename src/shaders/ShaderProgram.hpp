@@ -8,7 +8,7 @@ private:
 	unsigned int ID{};
 	
 public:
-	const unsigned int& GetID() const;
+	[[nodiscard]] const unsigned int& GetID() const;
 	[[nodiscard]] int GetUniformLocation(const char* uniform) const;
 	void Use() const;
 	explicit ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);

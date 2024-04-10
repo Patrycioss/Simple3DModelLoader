@@ -2,10 +2,10 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#include <stb_image.h>
+#include "stb_image.h"
 #include <fstream>
 
-IO::ImageInfo IO::LoadImage(std::string path, bool flipVertical)
+IO::ImageInfo IO::LoadImage(const std::string& path, bool flipVertical)
 {
 	ImageInfo imageInfo{};
 
@@ -15,7 +15,7 @@ IO::ImageInfo IO::LoadImage(std::string path, bool flipVertical)
 	return imageInfo;
 }
 
-std::string IO::ReadTextFile(std::string path)
+std::string IO::ReadTextFile(const std::string& path)
 {
 	std::ifstream file;
 
@@ -32,5 +32,5 @@ std::string IO::ReadTextFile(std::string path)
 	}
 
 	file.close();
-	return std::string(contents);
+	return {contents};
 }

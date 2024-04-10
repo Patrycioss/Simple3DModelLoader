@@ -1,5 +1,4 @@
 ﻿#include "Scene.hpp"
-#include "structures/Model.hpp"
 
 void Scene::AddGameObject(GameObject* gameObject)
 {

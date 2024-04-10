@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <functional>
 
-#include "../ShaderProgram.hpp"
+#include "../shaders/ShaderProgram.hpp"
 
 constexpr float mouseSensitivity = 0.1f;
 

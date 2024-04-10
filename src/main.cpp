@@ -1,14 +1,14 @@
 ﻿#include <cmath>
 
-#include "ShaderProgram.hpp"
+#include "shaders/ShaderProgram.hpp"
 #include "window/window.hpp"
 #include <glad/gl.h>
 #include "GLFW/glfw3.h"
-#include "Camera.hpp"
-#include "Scene.hpp"
-#include "MeshRenderer.hpp"
-#include "GameObject.hpp"
-#include "ModelLoader.hpp"
+#include "scene/Camera.hpp"
+#include "scene/Scene.hpp"
+#include "renderer/MeshRenderer.hpp"
+#include "IO/ModelLoader.hpp"
+#include "scene/GameObject.hpp"
 
 void CheckShouldCloseWindow(const Window& window)
 {
@@ -26,8 +26,8 @@ void LookAround(const Window& window, const float& deltaTime, Camera& camera, gl
 		firstMouse = false;
 	}
 
-	const float xOffset = mousePos.x - lastPos.x;
-	const float yOffset = lastPos.y - mousePos.y; // reversed since y-coordinates go from bottom to top
+	const float xOffset = (float) (mousePos.x - lastPos.x);
+	const float yOffset = (float) (lastPos.y - mousePos.y); // reversed since y-coordinates go from bottom to top
 
 	lastPos = mousePos;
 
@@ -45,7 +45,7 @@ void LookAround(const Window& window, const float& deltaTime, Camera& camera, gl
 
 void CalcDeltaTime(float& deltaTime, float& lastFrame)
 {
-	const float currentFrame = glfwGetTime();
+	const float currentFrame = (float) glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 }
@@ -93,9 +93,8 @@ int main()
 	
 	MeshRenderer* meshRenderer = new MeshRenderer();
 	
-	NewMesh* mesh = ModelLoader::LoadModel("resources/models/backpack/backpack.obj");
+	Mesh* mesh = ModelLoader::LoadModel("resources/models/backpack/backpack.obj");
 	meshRenderer->AssignMesh(mesh);
-	meshRenderer->Setup();
 
 	gameObject->AssignRenderer(meshRenderer);
 	scene.AddGameObject(gameObject);
@@ -109,7 +108,6 @@ int main()
 		ClearScreen();
 
 		scene.Draw();
-		
 		
 		window.Postframe();
 	}

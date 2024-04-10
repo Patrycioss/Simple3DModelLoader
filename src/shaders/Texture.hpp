@@ -3,11 +3,11 @@
 #include <string>
 #include <cstring>
 #include "glad/gl.h"
-#include "../IO.hpp"
+#include "../IO/IO.hpp"
 
 struct Texture
 {
-	unsigned int ID;
+	unsigned int ID{};
 	std::string Type;
 	std::string Path;
 	
@@ -20,7 +20,7 @@ struct Texture
 	}
 };
 
-inline Texture LoadFromFile(std::string fileName, std::string directory)
+inline Texture LoadFromFile(const std::string& fileName, const std::string& directory)
 {
 	std::string path = directory + '/' + fileName;
 
@@ -46,7 +46,7 @@ inline Texture LoadFromFile(std::string fileName, std::string directory)
 		else if (image.NrChannels == 4)
 			format = GL_RGBA;
 
-		glTexImage2D(GL_TEXTURE_2D, 0, format, image.Width, image.Height, 0, format, GL_UNSIGNED_BYTE, image.Data);
+		glTexImage2D(GL_TEXTURE_2D, 0, (int) format, image.Width, image.Height, 0, format, GL_UNSIGNED_BYTE, image.Data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	} else
 	{
