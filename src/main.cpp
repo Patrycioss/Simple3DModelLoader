@@ -89,24 +89,54 @@ int main()
 	
 	Scene scene(camera);
 
-	GameObject* gameObject = new GameObject();
-	
-	MeshRenderer* meshRenderer = new MeshRenderer();
-	
-	Mesh* mesh = ModelLoader::LoadModel("resources/models/backpack/backpack.obj");
-	meshRenderer->AssignMesh(mesh);
+	Mesh* cubeMesh = ModelLoader::LoadModel("resources/models/cube/cube.obj");
 
-	gameObject->AssignRenderer(meshRenderer);
-	scene.AddGameObject(gameObject);
+	GameObject* parentObject = new GameObject("Parent");
+	MeshRenderer* parentRenderer = new MeshRenderer();
+	
+	parentRenderer->AssignMesh(cubeMesh);
+
+	parentObject->AssignRenderer(parentRenderer);
+	scene.AddGameObject(parentObject);
+	
+	GameObject* childObject = new GameObject("Child");
+	MeshRenderer* childRenderer = new MeshRenderer();
+	childObject->AssignRenderer(childRenderer);
+	childRenderer->AssignMesh(cubeMesh);
+	childObject->SetParent(parentObject);
+	childObject->Transform.SetLocalPosition(glm::vec3(0,4,0));
+
+//	GameObject* childChildObject = new GameObject("Child");
+//	MeshRenderer* childChildRenderer = new MeshRenderer();
+//	childChildObject->AssignRenderer(childChildRenderer);
+//	childChildRenderer->AssignMesh(cubeMesh);
+//	childChildObject->SetParent(childObject);
+//	childChildObject->Transform.SetLocalPosition(glm::vec3(0,8,0));
+	
+	Transform& parentTransform = parentObject->Transform;
+
+	constexpr float PI = glm::pi<float>();
+	constexpr float angle = PI/50.0f;
+	constexpr glm::vec3 axis{0,0,1};
 	
 	while (!window.ShouldClose())
 	{
+		if (window.GetKey(GLFW_KEY_L) == GLFW_PRESS){
+			auto r = parentTransform.LocalRotation * glm::angleAxis(angle, axis);
+			parentTransform.SetLocalRotation(r);
+//			childObject->Transform.SetLocalRotation(r);
+
+			printf("LocalAngle: %f \n", glm::angle(parentTransform.LocalRotation) / glm::pi<float>());
+		}
+		
 		CheckShouldCloseWindow(window);     
 		LookAround(window, deltaTime, camera, lastPos, firstMouse);
 		CalcDeltaTime(deltaTime, lastFrame);
 
 		ClearScreen();
 
+//		parentObject->Transform.SetPosition(parentObject->Transform.Position + glm::vec3{0.01f,0,0});
+		
 		scene.Draw();
 		
 		window.Postframe();

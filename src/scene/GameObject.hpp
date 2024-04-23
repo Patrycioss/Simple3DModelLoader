@@ -10,21 +10,37 @@
 class GameObject
 {
 private:
-	
 	Renderer* renderer = nullptr;
-	Transform transform{};
-	
-	std::vector<Component*> components{};
-	std::vector<GameObject*> children{};
-	
 
-public:
-	Transform& Transform = transform;
+	std::vector<Component*> components{};
+	GameObject* parent = nullptr;
+	Transform transform{*this};
 	
+	std::string name{"Just a GameObject"};
+
+protected:
+	std::vector<GameObject*> children{};
+public:
+	const std::vector<GameObject*>& Children = children;
+	
+	Transform& Transform = transform;
+
 	void AssignRenderer(Renderer* renderer);
-	void AddComponent(Component* component);
+	virtual void AddComponent(Component* component);
 
 	void Draw(const Camera& camera) const;
+	
+	explicit GameObject(std::string name);
+	GameObject();
+	
+	void SetParent(GameObject* newParent);
+	GameObject* const& Parent = parent;
+
+	/*Checks whether the given GameObject has already been added.*/
+	void AddChild(GameObject* child);
+	void RemoveChild(GameObject* child);
+	
+	~GameObject();
 
 	template<class T>
 	void RemoveComponentsOfType()
@@ -53,5 +69,4 @@ public:
 		}
 		return nullptr;
 	};
-	virtual ~GameObject();
 };

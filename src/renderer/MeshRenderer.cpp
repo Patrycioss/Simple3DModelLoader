@@ -63,7 +63,9 @@ void MeshRenderer::Render(const glm::mat4& mvpMatrix)
 
 MeshRenderer::~MeshRenderer()
 {
-	delete mesh;
+	if (mesh != nullptr){
+		delete mesh;
+	}
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
