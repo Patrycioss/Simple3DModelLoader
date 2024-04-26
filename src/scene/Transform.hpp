@@ -15,7 +15,7 @@ private:
 	GameObject& m_GameObject;
 
 	glm::vec3 localPosition{0,0,0};
-	glm::quat localRotation{0,0,0,1};
+	glm::quat localRotation = glm::quat(0,0,0,1);
 	glm::vec3 localScale = glm::vec3(1,1,1);
 	
 	void ReCalculateWorldMatrix();
