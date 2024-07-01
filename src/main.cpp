@@ -86,19 +86,19 @@ int main()
 	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 	glm::vec2 lastPos = window.Size() / 2.0f;
 	bool firstMouse = true;
-	
+
 	Scene scene(camera);
 
-	Mesh* cubeMesh = ModelLoader::LoadModel("resources/models/cube/cube.obj");
+	Mesh* cubeMesh = ModelLoader::LoadModel("resources/models/backpack/backpack.obj");
 
 	GameObject* parentObject = new GameObject("Parent");
 	MeshRenderer* parentRenderer = new MeshRenderer();
-	
+
 	parentRenderer->AssignMesh(cubeMesh);
 
 	parentObject->AssignRenderer(parentRenderer);
 	scene.AddGameObject(parentObject);
-	
+
 	GameObject* childObject = new GameObject("Child");
 	MeshRenderer* childRenderer = new MeshRenderer();
 	childObject->AssignRenderer(childRenderer);
@@ -112,15 +112,21 @@ int main()
 //	childChildRenderer->AssignMesh(cubeMesh);
 //	childChildObject->SetParent(childObject);
 //	childChildObject->Transform.SetLocalPosition(glm::vec3(0,8,0));
-	
+
 	Transform& parentTransform = parentObject->Transform;
 
 	constexpr float PI = glm::pi<float>();
 	constexpr float angle = PI/50.0f;
 	constexpr glm::vec3 axis{0,0,1};
-	
+
+  constexpr float angle2 = PI/10.0f;
+  constexpr glm::vec3 axis2{0,1,0};
+
 	while (!window.ShouldClose())
 	{
+        auto p = parentTransform.LocalRotation * glm::angleAxis(angle2 * deltaTime, axis2);
+        parentTransform.SetLocalRotation(p);
+      
 		if (window.GetKey(GLFW_KEY_L) == GLFW_PRESS){
 			auto r = parentTransform.LocalRotation * glm::angleAxis(angle, axis);
 			parentTransform.SetLocalRotation(r);
@@ -128,8 +134,16 @@ int main()
 
 			printf("LocalAngle: %f \n", glm::angle(parentTransform.LocalRotation) / glm::pi<float>());
 		}
-		
-		CheckShouldCloseWindow(window);     
+
+//      if (window.GetKey(GLFW_KEY_L) == GLFW_PRESS){
+//        auto r = parentTransform.LocalRotation * glm::angleAxis(angle, axis);
+//        parentTransform.SetLocalRotation(r);
+////			childObject->Transform.SetLocalRotation(r);
+//
+////        printf("LocalAngle: %f \n", glm::angle(parentTransform.LocalRotation) / glm::pi<float>());
+//      }
+        
+		CheckShouldCloseWindow(window);
 		LookAround(window, deltaTime, camera, lastPos, firstMouse);
 		CalcDeltaTime(deltaTime, lastFrame);
 
@@ -139,7 +153,7 @@ int main()
 		
 		scene.Draw();
 		
-		window.Postframe();
+		window.PostFrame();
 	}
 
 	return 0;
