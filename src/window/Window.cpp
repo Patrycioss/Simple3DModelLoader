@@ -17,9 +17,9 @@ bool Window::InternalGetKey(const int glfwKey) const
 	return glfwGetKey(window, glfwKey) == GLFW_PRESS;
 }
 
-void Window::MouseCallbacK(GLFWwindow* window, double xpos, double ypos) const
+void Window::MouseCallback(GLFWwindow* window, double xPos, double yPos) const
 {
-	mousePos = {xpos, ypos};
+	mousePos = {xPos, yPos};
 }
 
 const glm::dvec2& Window::MousePos() const
@@ -53,7 +53,7 @@ Window::Window(const glm::vec2 size, const char* windowTitle)
 
 	printf("Set up Window!\n");
 
-	window = glfwCreateWindow(mode->width, mode->height, "My Title", nullptr, nullptr);
+    window = glfwCreateWindow(mode->width, mode->height, "My Title", nullptr, nullptr);
 	
 	if (window == nullptr)
 	{
@@ -70,13 +70,13 @@ Window::Window(const glm::vec2 size, const char* windowTitle)
 	
 	auto func = [](GLFWwindow* w, const double x, const double y)
 	{
-		static_cast<Window*>(glfwGetWindowUserPointer(w))->MouseCallbacK(w, x, y);
+		static_cast<Window*>(glfwGetWindowUserPointer(w))->MouseCallback(w, x, y);
 	};
 	
 	glfwSetCursorPosCallback(window, func);
 }
 
-void Window::Postframe() const
+void Window::PostFrame() const
 {
 	glfwPollEvents();
 	glfwSwapBuffers(window);

@@ -23,12 +23,12 @@ private:
 	mutable glm::dvec2 mousePos;
 	
 	bool InternalGetKey(int glfwKey) const;
-	void MouseCallbacK(GLFWwindow* window, double xpos, double ypos) const;
+	void MouseCallback(GLFWwindow* window, double xPos, double yPos) const;
 
 public:
 	const glm::dvec2& MousePos() const;
 	explicit Window(glm::vec2 size, const char* windowTitle);
-	void Postframe() const;
+	void PostFrame() const;
 	bool ShouldClose() const;
 	bool GetKey(int glfwKey, int glfwKeyState = GLFW_PRESS) const;
 	glm::vec2 Size() const;
